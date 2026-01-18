@@ -1,15 +1,18 @@
 [
   {
-    "description": "通过 URL 检索 Notion 实体的详细信息。\n如果你知道你想查看多个实体，你应该在一次工具调用中同时查看它们，而不是分多次进行。\n你可以查看以下类型的实体：\n- 页面（Page），例如来自 <page> 块或 <mention-page> 提及。这也会加载它以供后续更新和编辑。\n- 数据库（Database），例如来自 <database> 块或 <mention-database> 提及\n- 数据源（Data source），例如来自 <database> 内部的 <data-sources>\n- 视图（View），例如来自 <database> 内部的 <views>\n- 用户（User），例如来自 <mention-user> 提及\n- 文件和图片的内容，例如来自 <file> 或 <image> 源\n- 任何网页（通过 URL）\n\n当你需要查看一个或多个你已知晓其存在并拥有 URL 的 Notion 实体的详细信息时，请使用 view。\n\n用户永远不会知道 URL 的压缩版本（例如  some-url-1 ）。因此，如果用户要求你操作一个 URL，你必须首先查看 (View) 原始 URL。对任何网页 URL 使用 View 工具将自动为你提供原始 URL。否则，你可以启用 showRaw 标志。\n在需要查看完整 URL 之前，不要输出你正在查看完整 URL 这一事实。",
+    "description": "Retrieves details about Notion entities by their URLs.\nIf you know you want to view multiple entities, you should view them ALL at once in a single tool call instead of taking multiple turns.\nYou can view the following types of entities:\n- Page, ie. from a <page> block or a <mention-page> mention. This also loads it for later updates and edits.\n- Database, ie. from a <database> block or a <mention-database> mention\n- Data source, ie. from <data-sources> inside of <database>\n- View, ie. from a <views> inside of <database>\n- User, ie. from a <mention-user> mention\n- The content of files and images, ie. from a <file> or <image> source\n- Any webpage via a URL\n\nUse view when you need to see the details of one or more Notion entities you already know exists and have their URLs.\n\nThe user is never aware of the compressed version of a URL (i.e.  some-url-1 ). Thus, if the user asks you to manipulate a URL, you have to first View the raw URL. Using the View tool on any webpage URL will give you the raw URL automatically. Otherwise, you may enable the showRaw flag.\nBefore needing to see the full URL, do not output the fact that you are viewing the full URL.",
+    "description_zh": "通过 URL 检索有关 Notion 实体的详细信息。\n如果您知道要查看多个实体，则应在单个工具调用中一次查看所有实体，而不是分多次进行。\n您可以查看以下类型的实体：\n- 页面，即来自 <page> 块或 <mention-page> 提及。这也加载它以供以后的更新和编辑。\n- 数据库，即来自 <database> 块或 <mention-database> 提及\n- 数据源，即来自 <database> 内部的 <data-sources>\n- 视图，即来自 <database> 内部的 <views>\n- 用户，即来自 <mention-user> 提及\n- 文件和图像的内容，即来自 <file> 或 <image> 源\n- 通过 URL 的任何网页\n\n当您需要查看已知的且具有 URL 的一个或多个 Notion 实体的详细信息时，请使用 view。\n\n用户永远不会知道 URL 的压缩版本（即 some-url-1）。因此，如果用户要求您操作 URL，您必须首先查看原始 URL。在任何网页 URL 上使用 View 工具将自动为您提供原始 URL。否则，您可以启用 showRaw 标志。\n在需要查看完整 URL 之前，不要输出您正在查看完整 URL 的事实。",
     "name": "view",
     "parameters": {
       "properties": {
         "showRaw": {
-          "description": "是否在输出中显示原始 URL。对于基于 URL 的资源（网页），默认为 true，对于其他资源，默认为 false。",
+          "description": "Whether to show raw URLs in the output. Defaults to true for URL-based resources (webpages) and false for others.",
+          "description_zh": "是否在输出中显示原始 URL。对于基于 URL 的资源（网页），默认为 true，对于其他资源，默认为 false。",
           "type": "boolean"
         },
         "urls": {
-          "description": "要查看的 Notion 实体的 URL。",
+          "description": "The URLs of the Notion entities to view.",
+          "description_zh": "要查看的 Notion 实体的 URL。",
           "items": {
             "type": "string"
           },
@@ -23,19 +26,22 @@
     }
   },
   {
-    "description": "执行一次或多次搜索，范围包括：\n- \"internal\"：仅在用户的内部 Notion 工作区、他们连接的源（包括 Slack、Google Drive、Github、Jira、Microsoft Teams、Sharepoint、OneDrive 或 Linear）以及 Notion 的官方帮助文档中执行语义搜索。\n\n- \"web\"：仅执行网页搜索。仅当你非常确定用户不想要内部信息时才使用此选项。\n- \"default\"：同时执行内部搜索（Notion 工作区、他们连接的源（包括 Slack、Google Drive、Github、Jira、Microsoft Teams、Sharepoint、OneDrive 或 Linear）以及 Notion 的官方帮助文档）和网页搜索。结果将是内部和网页搜索结果的组合超集。\n- \"users\"：搜索用于创建提及或数据库查询的用户个人资料 ID 和电子邮件，但这不会提供有关该用户的信息，也不会查找由用户创建的文档、任务或其他内容。\n    你永远不应该使用这个，除非你需要 @提及 用户、创建数据库查询或检索他们的电子邮件地址。例如，你正试图进行数据库查询并尝试按特定用户进行筛选。\n\n当你需要查找其他工具未提供的信息，并且你不知道它位于何处时，可以使用 search。\n默认搜索 (Default search) 是最安全搜索工具，因为它通过提供内部和网页搜索结果的超集来做出最少的假设。它使用起来也又快又安全，所以你应该多多使用它。\n\n### 执行多次搜索\n\n你可以在一次工具调用中执行多次搜索，但前提 (ONLY) 是它们是真正不同且必要的。\n\n- 保持搜索简单。如果问题简单明了，请在 \"questions\" 中只输出一个查询。\n- 避免用多个查询搜索相同的信息；每次搜索都应是不同的，并服务于一个独特的目的。\n- 保持对不同或不相关实体的搜索分开（例如，分别搜索 “Project X” 和 “Project Y”，而不是将它们合并为 “Project X and Y”）。\n- 不要将对不同的人、文档或概念的搜索合并到单个查询中，因为这会降低搜索准确性。\n\n不要 (Do NOT) 使用搜索来获取有关数据库 (Database) 的集成、视图或其他组件的信息。\n不要 (Do NOT) 使用搜索来尝试查找 Notion 数据库 (Databases) 或数据源 (Data Sources)。\n\n如果初始结果未包含你需要的全部信息，那么你可以分散到多个查询。\n\n### 内部 / 默认搜索提示\n\n- 如果用户在询问有关使用 Notion 产品功能的帮助，使用查询 “helpdocs” 进行内部搜索将能找到 Notion 官方帮助文档。\n- 带有 20ed872b-594c-8102-9f4d-000206937e8e 这种形式的压缩 URL 的搜索结果是对外部搜索资源的引用。\n- 连接器 (Connector) 搜索结果不能用作 view 工具的 URL。\n- 当引用 connector-slack 或 connector-microsoft-teams 结果时，如果更具体的引用适用，你应该引用特定消息的 URL，而不是完整的搜索结果。\n- 当引用内部 notion 搜索结果时，你可以引用完整页面的 URL 或特定块的 URL。在可能的情况下，优先使用特定块的 URL。\n- 如果你是在用户提出第一个问题后进行搜索，请勿向搜索查询添加不必要的详细信息 - 基本上只需将用户的问题复制为格式正确的问题即可。\n\n### 仅网页搜索提示\n\n- 注意：你所做的第一次搜索几乎永远不应该是网页搜索。因为用户通常更喜欢内部信息。请改用默认搜索 (default search)。\n- 首先进行常规搜索，如果常规搜索不足够，再使用更严格的筛选条件，如类别 (category) 或域 (domain) 筛选。\n- 请记住，用户通常有他们更喜欢的内部信息。因此，使用默认搜索 (default search) 通常是安全的，除非用户明确要求仅进行网页搜索。",
+    "description": "Perform one or more searches over:\n- \"internal\": Perform semantic searches over only the user's internal Notion workspace, their connected sources (including Slack, Google Drive, Github, Jira, Microsoft Teams, Sharepoint, OneDrive, or Linear), and Notion's official help docs.\n\n- \"web\": Perform web searches only. Use this only when you're quite certain the user doesn't want internal information. - \"default\": Simultaneously do an internal search (Notion workspace, their connected sources (including Slack, Google Drive, Github, Jira, Microsoft Teams, Sharepoint, OneDrive, or Linear), and Notion's official help docs) AND a web search. The results will be a combined super-set of the internal and web results.\n- \"users\": Search for user profile id and email, which is used for creating mentions or database queries, but won't provide information about the user or find docs, tasks, or other content created by users.\n    You should never use this unless you need to @mention a user, create a database query or retrieve their email address. Eg if you're trying to do a database query and trying to filter to a specific user.\n\nYou can use search when you need to find information which is not already available via other tools, and you don't know where it's located.\nDefault search is the safest search tool, since it makes the fewest assumptions by providing a super-set of internal and web search results. It's also fast and safe to use, so you should use it liberally.\n\n### Performing multiple searches\n\nYou can perform multiple searches in a single tool call, but ONLY if they are truly distinct and necessary.\n\n- Keep searches simple. If the question is simple or straightforward, output just ONE query in \"questions\".\n- Avoid searching for the same information with multiple queries; each search should be distinct and serve a unique purpose.\n- Keep searches for distinct or unrelated entities separate (e.g., search for \"Project X\" and \"Project Y\" separately rather than combining them into \"Project X and Y\").\n- Don't combine searches for different people, documents, or concepts into a single query as this reduces search accuracy.\n\nDo NOT use search to get information about a Database's integrations, views, or other components.\nDo NOT use search to try to find Notion Databases or Data Sources.\n\nIf initial results do not contain all the information you need, then you can fan out to multiple queries.\n\n### Internal / Default Search Tips\n\n- If the user is asking for help using Notion's product features, an internal search with the query \"helpdocs\" will surface official Notion help docs.\n- A search result with a compressed URL of the form 20ed872b-594c-8102-9f4d-000206937e8e is a reference to an external search resource.\n- Connector search results cannot be used as a URL for the view tool.\n- When citing connector-slack or connector-microsoft-teams results, you should cite the URLs of specific messages instead of the full search result if a more specific citation is applicable.\n- When citing internal notion search results, you may cite the URL of the full page or a specific block. Favor the URL of the specific block when possible.\n- If you are searching after a user's first question, do not add unnecessary details to the search query - basically just copy the user's question as a properly formatted question.\n\n### Web-only Search Tips\n\n- Caution: The first search you do should almost never be a web search. Because users often prefer internal information. Do a default search instead.\n- Start with a general search first, and use the more restrictive filters like category or domain filters if a general search is insufficient.\n- Remember that users often have internal information that they prefer. So it's often safe to use default search, unless the user has clearly asked for a web-only search.",
+    "description_zh": "执行一个或多个搜索：\n- \"internal\"：仅对用户的内部 Notion 工作区、其连接的源（包括 Slack, Google Drive, Github, Jira, Microsoft Teams, Sharepoint, OneDrive 或 Linear）和 Notion 的官方帮助文档执行语义搜索。\n\n- \"web\"：仅执行网络搜索。仅当您非常确定用户不想要内部信息时才使用此选项。 - \"default\"：同时执行内部搜索（Notion 工作区、其连接的源（包括 Slack, Google Drive, Github, Jira, Microsoft Teams, Sharepoint, OneDrive 或 Linear）和 Notion 的官方帮助文档）和网络搜索。结果将是内部和网络结果的组合超集。\n- \"users\"：搜索用户配置文件 ID 和电子邮件，用于创建提及或数据库查询，但不会提供有关用户的信息或查找用户创建的文档、任务或其他内容。\n    除非您需要 @提及用户、创建数据库查询或检索其电子邮件地址，否则切勿使用此选项。例如，如果您尝试执行数据库查询并尝试针对特定用户进行过滤。\n\n当您需要查找通过其他工具尚未获得的信息，并且您不知道它位于何处时，可以使用搜索。\n默认搜索是最安全的搜索工具，因为它通过提供内部和网络搜索结果的超集，做出的假设最少。它也快速且安全，因此您应该自由地使用它。\n\n### 执行多个搜索\n\n您可以在单个工具调用中执行多个搜索，但前提是它们确实不同且必要。\n\n- 保持搜索简单。如果问题简单明了，只需在 \"questions\" 中输出一个查询。\n- 避免使用多个查询搜索相同的信息；每个搜索都应不同且服务于独特的目的。\n- 将不同或不相关实体的搜索分开（例如，分别搜索 \"Project X\" 和 \"Project Y\"，而不是将它们组合成 \"Project X and Y\"）。\n- 不要将不同人员、文档或概念的搜索组合成单个查询，因为这会降低搜索准确性。\n\n不要使用搜索来获取有关数据库集成、视图或其他组件的信息。\n不要使用搜索来尝试查找 Notion 数据库或数据源。\n\n如果初始结果不包含您需要的所有信息，那么您可以分散到多个查询。\n\n### 内部 / 默认搜索提示\n\n- 如果用户请求有关使用 Notion 产品功能的帮助，则使用查询 \"helpdocs\" 进行内部搜索将显示官方 Notion 帮助文档。\n- 形式为 20ed872b-594c-8102-9f4d-000206937e8e 的压缩 URL 搜索结果是对外部搜索资源的引用。\n- 连接器搜索结果不能用作 view 工具的 URL。\n- 引用 connector-slack 或 connector-microsoft-teams 结果时，如果适用更具体的引用，则应引用特定消息的 URL，而不是完整的搜索结果。\n- 引用内部 notion 搜索结果时，您可以引用完整页面或特定块的 URL。尽可能首选特定块的 URL。\n- 如果您在用户提出第一个问题后进行搜索，请不要向搜索查询添加不必要的细节 - 基本上只需将用户的问题复制为格式正确的问题即可。\n\n### 仅限网络的搜索提示\n\n- 注意：您进行的第一次搜索几乎不应该是网络搜索。因为用户通常喜欢内部信息。而是进行默认搜索。\n- 首先进行一般搜索，如果一般搜索不足，则使用更严格的过滤器（如类别或域过滤器）。\n- 请记住，用户通常拥有他们喜欢的内部信息。因此，除非用户明确要求仅限网络的搜索，否则使用默认搜索通常是安全的。",
     "name": "search",
     "parameters": {
       "properties": {
         "default": {
           "properties": {
             "dataSourceUrl": {
-              "description": "可选，提供要搜索的数据源 (Data source) 的 URL。这将在该数据源的页面上执行语义搜索。\n注意：必须是数据源 (Data Source)，而不是数据库 (Database)。",
+              "description": "Optionally, provide the URL of a Data source to search. This will perform a semantic search over the pages in the Data Source.\nNote: must be a Data Source, not a Database.",
+              "description_zh": "可选地，提供要搜索的数据源的 URL。这将对数据源中的页面执行语义搜索。\n注意：必须是数据源，而不是数据库。",
               "type": "string"
             },
             "questions": {
               "items": {
-                "description": "一个用于搜索信息的问题，类似于内部搜索问题。\n该问题将同时被内部和网页搜索系统使用，以产生一个结果超集。\n适用与内部搜索问题相同的准则。",
+                "description": "A question to search for information, similar to the internal search question.\nThe question will be used by both the internal and web search systems to produce a super-set of results.\nThe same guidelines apply as for the internal search question.",
+                "description_zh": "搜索信息的问题，类似于内部搜索问题。\n该问题将被内部和网络搜索系统用于生成结果的超集。\n相同的准则适用于内部搜索问题。",
                 "type": "string"
               },
               "required": [
@@ -52,12 +58,14 @@
         "internal": {
           "properties": {
             "dataSourceUrl": {
-              "description": "可选，提供要搜索的数据源 (Data source) 的 URL。这将在该数据源的页面上执行语义搜索。\n注意：必须是数据源 (Data Source)，而不是数据库 (Database)。",
+              "description": "Optionally, provide the URL of a Data source to search. This will perform a semantic search over the pages in the Data Source.\nNote: must be a Data Source, not a Database.",
+              "description_zh": "可选地，提供要搜索的数据源的 URL。这将对数据源中的页面执行语义搜索。\n注意：必须是数据源，而不是数据库。",
               "type": "string"
             },
             "questions": {
               "items": {
-                "description": "一个用于在用户的工作区和任何第三方搜索连接器中搜索信息的问题。\n除非另有说明，否则问题必须与用户输入的语言相同。\n自然地表述问题，例如：“2025 年 4 月 OneLink 的 ARR 是多少？”\n避免以不同方式提问相同的问题。每个问题都应该是对信息的明确请求。\n如果问题简单明了，请从一个问题开始。\n如果用户输入只是几个关键字，意图不明，请从一个包含所有关键字的简单问题开始。\n你的问题将如何被使用：该问题将作为输入传递给一个专门的 LLM，后者会将其转换为特定格式的结构化搜索查询；然后该结构化搜索查询将被传递到搜索管道中。这个专门的 LLM 接受过将来自人类的自然语言问题转换为结构化搜索查询的训练，你的问题将像来自人类的问题一样显示给它。对于给定的输入，LLM 将输出 1 个或多个结构化搜索查询，其中包括一个问题和关键字，以及可选的回溯 (lookback) 和来源 (source) 参数；其他可选的筛选条件，例如频道（在 slack 中）、项目（在 linear/jira 中）或特定文件类型（电子表格、演示文稿等）；以及一个可选参数，用于将 Notion 帮助中心添加到搜索范围，用于有关如何使用 Notion 的问题。  请记住将你的问题写成人类会写的自然语言问题，因为这是 LLM 工作得最好的方式。",
+                "description": "A question to search for information in the user's workspace and any third-party search connectors.\nQuestions must be in the same language as the user input unless specified otherwise.\nPhrase the question naturally, e.g. \"What is the ARR for OneLink for the month of April 2025?\"\nAvoid asking the same question in different ways. Each question should be a distinct request for information.\nIf the question is simple or straightforward, start with just one question.\nIf the user input is just a few keywords with no clear intent, start with one simple question that includes all the keywords.\nHOW YOUR QUESTION WILL BE USED: The question will be passed in as the input to a specialized LLM that will convert it into a structured search query in a specific format; that structured search query will then be passed into a search pipeline. The specialized LLM is trained on converting natural language questions from humans into structured search queries, and your question will be shown to it as if it were a question from a human. For a given input, the LLM will output 1 or more structured search queries that include a question and keywords, along with optional lookback and source parameters; other optional filters such as for channels (in slack), projects (in linear/jira), or specific file types (spreadsheets, presentations, etc); and an optional parameter to add Notion Help Center to the search scope, used for questions about how to use Notion.  Remember to write your question as a natural language question like a human would write, since that's what the LLM works best with.",
+                "description_zh": "在用户的工作区和任何第三方搜索连接器中搜索信息的问题。\n除非另有说明，否则问题必须使用与用户输入相同的语言。\n自然地表达问题，例如 \"OneLink 在 2025 年 4 月的 ARR 是多少？\"\n避免以不同的方式问同一个问题。每个问题应该是一个独特的信息请求。\n如果问题简单明了，请从一个问题开始。\n如果用户输入只是几个没有明确意图的关键字，请从一个包含所有关键字的简单问题开始。\n您的问题将如何被使用：该问题将作为输入传递给专门的 LLM，该 LLM 将其转换为特定格式的结构化搜索查询；然后将该结构化搜索查询传递到搜索管道中。专门的 LLM 经过训练，可以将人类的自然语言问题转换为结构化搜索查询，您的问题将像来自人类的问题一样显示给它。对于给定的输入，LLM 将输出 1 个或多个包含问题和关键字的结构化搜索查询，以及可选的回溯和源参数；其他可选过滤器，如针对频道（在 slack 中）、项目（在 linear/jira 中）或特定文件类型（电子表格、演示文稿等）；以及一个可选参数，将 Notion 帮助中心添加到搜索范围，用于有关如何使用 Notion 的问题。请记住像人类一样将您的问题写成自然语言问题，因为这是 LLM 效果最好的方式。",
                 "type": "string"
               },
               "required": [
@@ -75,7 +83,8 @@
           "properties": {
             "queries": {
               "items": {
-                "description": "用于通过匹配姓名或电子邮件地址来查找用户的子字符串或关键字。例如：\"john\" 或 \"john@example.com\"",
+                "description": "Substring or keyword to find users by matching against their name or email address. For example: \"john\" or \"john@example.com\"",
+                "description_zh": "通过匹配其名称或电子邮件地址查找用户的子字符串或关键字。例如：\"john\" 或 \"john@example.com\"",
                 "type": "string"
               },
               "type": "array"
@@ -89,7 +98,8 @@
         "web": {
           "properties": {
             "category": {
-              "description": "可选的数据类别，用于将搜索集中在特定类型的内容上。\n例如：“research paper” (科研论文) 用于学术论文，“news” (新闻) 用于新闻文章，“company” (公司) 用于公司信息。",
+              "description": "Optional data category to focus the search on specific types of content.\nFor example: \"research paper\" for academic papers, \"news\" for news articles, \"company\" for company information.",
+              "description_zh": "可选数据类别，将搜索重点放在特定类型的内容上。\n例如：\"research paper\" 代表学术论文，\"news\" 代表新闻文章，\"company\" 代表公司信息。",
               "enum": [
                 "company",
                 "research paper",
@@ -104,28 +114,32 @@
               "type": "string"
             },
             "excludeDomains": {
-              "description": "可选的要从搜索中排除的域列表。\n例如：[\"reddit.com\", \"twitter.com\"] 以排除社交媒体。",
+              "description": "Optional list of domains to exclude from the search.\nFor example: [\"reddit.com\", \"twitter.com\"] to exclude social media.",
+              "description_zh": "要从搜索中排除的可选域列表。\n例如：[\"reddit.com\", \"twitter.com\"] 以排除社交媒体。",
               "items": {
                 "type": "string"
               },
               "type": "array"
             },
             "excludeText": {
-              "description": "可选的文本片段列表，这些片段不得出现在搜索结果中。目前，只支持 1 个字符串，最多 5 个词。\n例如：[\"sponsored\", \"advertisement\"] 以排除推广内容。",
+              "description": "Optional list of text snippets that must not appear in the search results. Currently, only 1 string is supported, of up to 5 words.\nFor example: [\"sponsored\", \"advertisement\"] to exclude promotional content.",
+              "description_zh": "不得出现在搜索结果中的可选文本片段列表。目前仅支持 1 个字符串，最多 5 个单词。\n例如：[\"sponsored\", \"advertisement\"] 以排除促销内容。",
               "items": {
                 "type": "string"
               },
               "type": "array"
             },
             "includeDomains": {
-              "description": "可选的域列表，用于将搜索限制在这些域内。\n例如：[\"arxiv.org\", \"nature.com\"] 以仅搜索学术来源。",
+              "description": "Optional list of domains to restrict the search to.\nFor example: [\"arxiv.org\", \"nature.com\"] to search only academic sources.",
+              "description_zh": "将搜索限制到的可选域列表。\n例如：[\"arxiv.org\", \"nature.com\"] 以仅搜索学术来源。",
               "items": {
                 "type": "string"
               },
               "type": "array"
             },
             "includeText": {
-              "description": "可选的文本片段列表，这些片段必须出现在搜索结果中。\n例如：[\"climate change\", \"renewable energy\"] 以查找包含这些短语的页面。",
+              "description": "Optional list of text snippets that must appear in the search results.\nFor example: [\"climate change\", \"renewable energy\"] to find pages containing these phrases.",
+              "description_zh": "必须出现在搜索结果中的可选文本片段列表。\n例如：[\"climate change\", \"renewable energy\"] 以查找包含这些短语的页面。",
               "items": {
                 "type": "string"
               },
@@ -133,7 +147,8 @@
             },
             "queries": {
               "items": {
-                "description": "用于在网络上查找相关信息的搜索查询。使用自然语言并包含关键术语。\n例如：“LLM 能力的最新发展”",
+                "description": "Search query to find relevant information on the web. Use natural language and include key terms.\nFor example: \"Latest developments in LLM capabilities\"",
+                "description_zh": "在网络上查找相关信息的搜索查询。使用自然语言并包含关键术语。\n例如：\"Latest developments in LLM capabilities\"",
                 "type": "string"
               },
               "type": "array"
@@ -149,16 +164,19 @@
     }
   },
   {
-    "description": "创建具有指定属性和内容的一个或多个 Notion 页面。\n当你需要创建一个或多个尚不存在的新页面时，请使用 create-pages。\n\n你可以通过以下三种父级选项之一来创建页面：\n1. 创建一个顶层私有页面（未指定父级）\n2. 在另一个页面下创建页面（指定 parentPageUrl）\n3. 在数据源中创建页面（指定 parentDataSourceUrl）\n你必须且只能选择这三个选项中的一个。\n\n创建页面的示例：\n1. 创建一个带有标题和内容的独立页面：\n{\"pages\": [{\"properties\":{\"title\":\"Page title\"},\"content\":\"# Section 1\n\nSection 1 content\n\n# Section 2\n\nSection 2 content\"}]}\n2. 在 URL 为 toolu_01U6NtB5oyBfyT5zempqX4jH 的 Tasks 数据源中创建一个页面，并包含 “Task Name” 和 “Status” 属性：\n// 注意我们如何使用键 “Task Name” 而不是 “title”，因为该数据源有一个名为 “Task Name” 的标题属性。\n{\"parentDataSourceUrl\":\"toolu_01U6NtB5oyBfyT5zempqX4jH\",\"pages\":[{\"properties\":{\"Task Name\":\"Task 123\",\"Status\":\"In Progress\"}}]}",
+    "description": "Creates one or more Notion pages with specified properties and content.\nUse create-pages when you need to create one or more new pages that don't exist yet.\n\nYou can create a page with one of three options for its parent:\n1. Create a top-level private page (no parent specified)\n2. Create a page under another page (specify parentPageUrl)\n3. Create a page in a data source (specify parentDataSourceUrl)\nYou must choose exactly one of these three options.\n\nExamples of creating pages:\n1. Create a standalone page with a title and content:\n{\"pages\": [{\"properties\":{\"title\":\"Page title\"},\"content\":\"# Section 1\n\nSection 1 content\n\n# Section 2\n\nSection 2 content\"}]}\n2. Create a page in a Tasks data source with URL toolu_01U6NtB5oyBfyT5zempqX4jH and properties \"Task Name\" and \"Status\":\n// Note how we use the key \"Task Name\" instead of \"title\" because the data source has a \"Task Name\" title property.\n{\"parentDataSourceUrl\":\"toolu_01U6NtB5oyBfyT5zempqX4jH\",\"pages\":[{\"properties\":{\"Task Name\":\"Task 123\",\"Status\":\"In Progress\"}}]}",
+    "description_zh": "创建具有指定属性和内容的一个或多个 Notion 页面。\n当您需要创建一个或多个尚不存在的新页面时，请使用 create-pages。\n\n您可以使用其父级的三个选项之一创建页面：\n1. 创建顶级私有页面（未指定父级）\n2. 在另一个页面下创建页面（指定 parentPageUrl）\n3. 在数据源中创建页面（指定 parentDataSourceUrl）\n您必须恰好选择这三个选项之一。\n\n创建页面的示例：\n1. 创建具有标题和内容的独立页面：\n{\"pages\": [{\"properties\":{\"title\":\"Page title\"},\"content\":\"# Section 1\n\nSection 1 content\n\n# Section 2\n\nSection 2 content\"}]}\n2. 在具有 URL toolu_01U6NtB5oyBfyT5zempqX4jH 以及属性 \"Task Name\" 和 \"Status\" 的任务数据源中创建页面：\n// 请注意我们如何使用键 \"Task Name\" 而不是 \"title\"，因为数据源具有 \"Task Name\" 标题属性。\n{\"parentDataSourceUrl\":\"toolu_01U6NtB5oyBfyT5zempqX4jH\",\"pages\":[{\"properties\":{\"Task Name\":\"Task 123\",\"Status\":\"In Progress\"}}]}",
     "name": "create-pages",
     "parameters": {
       "properties": {
         "pages": {
-          "description": "要创建的页面，以 JSON 数组表示。",
+          "description": "The pages to create as a JSON array.",
+          "description_zh": "要创建为 JSON 数组的页面。",
           "items": {
             "properties": {
               "content": {
-                "description": "可选的页面内容，使用 Notion 风格的 markdown 格式。系统提示中已向你提供了有关 Notion 风格 markdown 的详细信息。\n请有品味地使用格式选项，如粗体和斜体文本、Notion 块（如 callouts 等）。你的目标是创建一个看起来像 Notion 原生的漂亮页面。\n每个 Notion 页面都有一个 title 属性，它会自动显示在页面顶部，作为一个大标题。请勿在内容开头添加额外的大标题，直接进入页面正文即可。如果你确实包含了一个重复标题的大标题，它将被自动删除。",
+                "description": "Optional page content in Notion-flavored markdown format. Details about Notion-flavored markdown have been provided to you in the system prompt.\nMake tasteful use of formatting options like bold and italic text, Notion blocks such as callouts etc. Your goal is to create a beautiful page that looks Notion-native.\nEvery Notion page has a title property which is automatically shown at the top of the page as a large heading. Do not include an additional heading at the start of the content, just go directly into the body of the page. If you do include a heading that duplicates the title, it will be removed automatically.",
+                "description_zh": "Notion 风格 markdown 格式的可选页面内容。有关 Notion 风格 markdown 的详细信息已在系统提示中提供给您。\n高雅地使用格式选项（如粗体和斜体文本）、Notion 块（如标注等）。您的目标是创建一个看起来像 Notion 原生的漂亮页面。\n每个 Notion 页面都有一个标题属性，该属性会自动作为大标题显示在页面顶部。不要在内容开头包含额外的标题，只需直接进入页面正文即可。如果您确实包含重复标题的标题，它将被自动删除。",
                 "type": "string"
               },
               "properties": {
@@ -168,10 +186,12 @@
                     "number"
                   ]
                 },
-                "description": "新页面的属性，是一个从属性名称到 SQLite 值的 JSON 映射。\n对于数据源中的页面，请使用 <sqlite-table> 中显示的 SQLite 模式 (schema) 定义。\n对于数据源之外的页面，唯一必需的属性是 \"title\"，即页面的标题，使用内联 markdown 格式。\n有关可接受的格式，请参见 “Property Value Formats” (属性值格式) 部分。",
+                "description": "The properties of the new page, which is a JSON map of property names to SQLite values.\nFor pages in a data source, use the SQLite schema definition shown in <sqlite-table>.\nFor pages outside of a data source, the only required property is \"title\", which is the title of the page in inline markdown format.\nSee the \"Property Value Formats\" section for accepted formats.",
+                "description_zh": "新页面的属性，它是属性名称到 SQLite 值的 JSON 映射。\n对于数据源中的页面，请使用 <sqlite-table> 中显示的 SQLite 模式定义。\n对于数据源之外的页面，唯一需要的属性是 \"title\"，它是内联 markdown 格式的页面标题。\n有关接受的格式，请参阅“属性值格式”部分。",
                 "properties": {
                   "title": {
-                    "description": "要赋予新页面的标题，如果它不在数据源中。如果页面在数据源中，请仅使用数据源模式中的属性。",
+                    "description": "Title to give the new page, if it is not in a data source. If the page is in a data source, only use properties from the data source schema.",
+                    "description_zh": "如果新页面不在数据源中，则为其指定标题。如果页面在数据源中，则仅使用数据源模式中的属性。",
                     "type": "string"
                   }
                 },
@@ -183,11 +203,13 @@
           "type": "array"
         },
         "parentDataSourceUrl": {
-          "description": "你想要在其中创建此新页面的数据源的 URL。请使用 <data-source> XML 标签中的 url 属性。为确保属性值有效，你在数据源中创建页面之前必须了解其完整模式。",
+          "description": "URL of the data source where you want to create this new page. Use the url attribute from the <data-source> XML tag. To ensure valid property values, you must know the full schema of the data source before creating a page in it.",
+          "description_zh": "要在其中创建此新页面的数据源的 URL。使用 <data-source> XML 标记中的 url 属性。为确保有效的属性值，您必须在其中创建页面之前了解数据源的完整模式。",
           "type": "string"
         },
         "parentPageUrl": {
-          "description": "你想要在其中创建此新页面的父页面的 URL。请使用 <page> XML 标签中的 url 属性。",
+          "description": "URL of the parent page where you want to create this new page. Use the url attribute from the <page> XML tag.",
+          "description_zh": "要在其中创建此新页面的父页面的 URL。使用 <page> XML 标记中的 url 属性。",
           "type": "string"
         }
       },
@@ -198,12 +220,14 @@
     }
   },
   {
-    "description": "更新 Notion 页面的属性和/或内容。\n\n重要提示：使用此工具向空白页面（在 view 输出中由 <blank-page> 标签指示）添加内容，而不是创建新的子页面。\n\nNotion 页面属性是一个从属性名称到 SQLite 值的 JSON 映射。\n对于数据源中的页面，请使用 <sqlite-table> 中显示的 SQLite 模式 (schema) 定义。\n对于数据源之外的页面，唯一允许的属性是 \"title\"，即页面的标题，它会自动显示在页面顶部，作为一个大标题。\n如果你正在更新的页面标题为空，请生成一个标题，并在输入中与任何其他更新一起传入。\n\nNotion 页面内容是 Notion 风格 markdown 格式的字符串。系统提示中已向你提供了有关 Notion 风格 markdown 的详细信息。\n如果你正在更新的页面是空的或接近空的，你应该有品味地使用格式选项，如粗体和斜体文本、Notion 块（如 callouts 等）。你的目标是创建一个看起来像 Notion 原生的漂亮页面。\n然而，如果你正在更新的页面已经具有特定的格式和风格，最好尝试匹配该格式和风格。\n\n为了更新一个页面，你必须首先使用 \"view\" 工具查看该页面。这种“先查看后更新”的模式适用于所有命令。\n\n重要提示：你不能在同一个页面上并行调用 update-page。要么设法使用可用的命令进行单次 update-page 调用，要么在顺序的工具调用中进行更新。\n\n你可以使用任何操作中的 parentPageUrl 或 parentDataSourceUrl 字段来更改页面的父页面或数据源。如果只是更改父级，请使用 updateProperties 命令，且不带任何属性。\n\n示例：\n\n为数据源中的页面更新页面属性，该数据源具有 “Task Name” 和 “Status” 属性：\n// 对于数据源更新，首先对 url user://20ed872b-594c-8102-9f4d-000206937e8e 使用 \"view\" 工具，以确保页面被加载，即使你只关心更新属性。\n// 注意我们如何使用键 “Task Name” 而不是 “title”，因为该数据源有一个名为 “Task Name” 的标题属性。\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"properties\":{\"Task Name\":\"Task 123\",\"Status\":\"In Progress\"}}\n\n替换独立页面上的所有内容并设置标题：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"properties\":{\"title\":\"New Page Title\"},\"newStr\":\"# New Section\nUpdated content goes here\"}\n\n替换页面中的特定内容：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContentRange\",\"selectionWithEllipsis\":\"# Old Section...end of section\",\"newStr\":\"# New Section\nUpdated content goes here\"}\n\n在特定文本后插入内容：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"insertContentAfter\",\"selectionWithEllipsis\":\"Previous section...end of section\",\"newStr\":\"## New Section\nContent to insert goes here\"}\n\n将页面移动到数据源：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"parentDataSourceUrl\":\"https://www.notion.so/22641c91b3f580808e41c298eedc933f\",\"properties\":{}}\n\n将页面移动到另一个页面：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"parentPageUrl\":\"https://www.notion.so/22641c91b3f580808e41c298eedc933f\",\"properties\":{}}\n\n用新的子页面更新页面内容：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"newStr\":\"# New Section\n<page>New Page</page>\"}\n\n用新的内联数据库更新页面：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"newStr\":\"# New Section\n<database inline=\"true\">New Database</database>\"}",
+    "description": "Update a Notion page properties and/or content.\n\nIMPORTANT: Use this tool to add content to blank pages (indicated by <blank-page> tag in view output) instead of creating new subpages.\n\nNotion page properties are a JSON map of property names to SQLite values.\nFor pages in a data source, use the SQLite schema definition shown in <sqlite-table>.\nFor pages outside of a data source, the only allowed property is \"title\", which is the title of the page and is automatically shown at the top of the page as a large heading.\nIf the page you are updating has an empty title, generate one and pass it in the input along with any other updates.\n\nNotion page content is a string in Notion-flavored markdown format. Details about Notion-flavored markdown have been provided to you in the system prompt.\nIf the page you are updating is empty or near-empty, you should make tasteful use of formatting options like bold and italic text, Notion blocks such as callouts etc. Your goal is to create a beautiful page that looks Notion-native.\nIf the page you are updating is already in a particular format and style, though, it is often best to try to match that format and style.\n\nIn order to update a page, you must first view the page using the \"view\" tool. This view-then-update pattern applies to all commands.\n\nIMPORTANT: You cannot call update-page in parallel on the same page. Either find a way to use a single update-page using the available commands, or do the updates in sequential tool calls.\n\nYou can change a page's parent page or data source using the parentPageUrl or parentDataSourceUrl fields with any operation. If only changing the parent, use the updateProperties command with no properties.\n\nExamples:\n\nUpdate page properties for a page in a data source with properties \"Task Name\" and \"Status\":\n// For data source updates, first use the \"view\" tool on url user://20ed872b-594c-8102-9f4d-000206937e8e to make sure that the page is loaded, even if you only care about updating properties.\n// Note how we use the key \"Task Name\" instead of \"title\" because the data source has a \"Task Name\" title property.\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"properties\":{\"Task Name\":\"Task 123\",\"Status\":\"In Progress\"}}\n\nReplace all content and set a title on a standalone page:\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"properties\":{\"title\":\"New Page Title\"},\"newStr\":\"# New Section\nUpdated content goes here\"}\n\nReplace specific content in a page:\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContentRange\",\"selectionWithEllipsis\":\"# Old Section...end of section\",\"newStr\":\"# New Section\nUpdated content goes here\"}\n\nInsert content after specific text:\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"insertContentAfter\",\"selectionWithEllipsis\":\"Previous section...end of section\",\"newStr\":\"## New Section\nContent to insert goes here\"}\n\nMove a page to a data source:\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"parentDataSourceUrl\":\"https://www.notion.so/22641c91b3f580808e41c298eedc933f\",\"properties\":{}}\n\nMove a page to a page:\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"parentPageUrl\":\"https://www.notion.so/22641c91b3f580808e41c298eedc933f\",\"properties\":{}}\n\nUpdate page content with a new sub-page:\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"newStr\":\"# New Section\n<page>New Page</page>\"}\n\nUpdate a page with a new inline database:\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"newStr\":\"# New Section\n<database inline=\"true\">New Database</database>\"}",
+    "description_zh": "更新 Notion 页面属性和/或内容。\n\n重要：使用此工具向空白页面（在视图输出中由 <blank-page> 标记指示）添加内容，而不是创建新的子页面。\n\nNotion 页面属性是属性名称到 SQLite 值的 JSON 映射。\n对于数据源中的页面，请使用 <sqlite-table> 中显示的 SQLite 模式定义。\n对于数据源之外的页面，唯一允许的属性是 \"title\"，即页面标题，它会自动作为大标题显示在页面顶部。\n如果您要更新的页面标题为空，请生成一个标题并将其与任何其他更新一起在输入中传递。\n\nNotion 页面内容是 Notion 风格 markdown 格式的字符串。有关 Notion 风格 markdown 的详细信息已在系统提示中提供给您。\n如果您要更新的页面是空的或接近空的，您应该高雅地使用格式选项（如粗体和斜体文本）、Notion 块（如标注等）。您的目标是创建一个看起来像 Notion 原生的漂亮页面。\n但是，如果您要更新的页面已经是特定格式和样式，通常最好尝试匹配该格式和样式。\n\n为了更新页面，您必须首先使用 \"view\" 工具查看页面。这种先查看后更新的模式适用于所有命令。\n\n重要：您不能在同一页面上并行调用 update-page。要么找到一种使用可用命令使用单个 update-page 的方法，要么在顺序工具调用中进行更新。\n\n您可以使用任何操作的 parentPageUrl 或 parentDataSourceUrl 字段更改页面的父页面或数据源。如果仅更改父级，请使用不带属性的 updateProperties 命令。\n\n示例：\n\n更新数据源中页面的页面属性，具有属性 \"Task Name\" 和 \"Status\"：\n// 对于数据源更新，首先在 url user://20ed872b-594c-8102-9f4d-000206937e8e 上使用 \"view\" 工具，以确保页面已加载，即使您只关心更新属性。\n// 请注意我们如何使用键 \"Task Name\" 而不是 \"title\"，因为数据源具有 \"Task Name\" 标题属性。\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"properties\":{\"Task Name\":\"Task 123\",\"Status\":\"In Progress\"}}\n\n替换独立页面上的所有内容并设置标题：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"properties\":{\"title\":\"New Page Title\"},\"newStr\":\"# New Section\nUpdated content goes here\"}\n\n替换页面中的特定内容：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContentRange\",\"selectionWithEllipsis\":\"# Old Section...end of section\",\"newStr\":\"# New Section\nUpdated content goes here\"}\n\n在特定文本后插入内容：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"insertContentAfter\",\"selectionWithEllipsis\":\"Previous section...end of section\",\"newStr\":\"## New Section\nContent to insert goes here\"}\n\n将页面移动到数据源：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"parentDataSourceUrl\":\"https://www.notion.so/22641c91b3f580808e41c298eedc933f\",\"properties\":{}}\n\n将页面移动到页面：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"updateProperties\",\"parentPageUrl\":\"https://www.notion.so/22641c91b3f580808e41c298eedc933f\",\"properties\":{}}\n\n使用新的子页面更新页面内容：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"newStr\":\"# New Section\n<page>New Page</page>\"}\n\n使用新的内联数据库更新页面：\n{\"pageUrl\":\"user://20ed872b-594c-8102-9f4d-000206937e8e\",\"command\":\"replaceContent\",\"newStr\":\"# New Section\n<database inline=\"true\">New Database</database>\"}",
     "name": "update-page",
     "parameters": {
       "properties": {
         "command": {
-          "description": "要执行的命令：\n- \"updateProperties\"：更新页面属性（需要 'properties' 字段）\n- \"replaceContent\"：替换页面中的所有内容（需要 'newStr' 字段）\n- \"replaceContentRange\"：替换页面中的特定内容（需要 'selectionWithEllipsis' 和 'newStr' 字段）\n- \"insertContentAfter\"：在特定文本后新起一行插入内容（需要 'selectionWithEllipsis' 和 'newStr' 字段）。请记住，由于新内容会插入到新行上，通常你不应该以换行符开始该字符串。",
+          "description": "The command to execute:\n- \"updateProperties\": Update page properties (requires 'properties' field)\n- \"replaceContent\": Replace all content in the page (requires 'newStr' field)\n- \"replaceContentRange\": Replace specific content in the page (requires 'selectionWithEllipsis' and 'newStr' fields)\n- \"insertContentAfter\": Insert content on a new line after specific text (requires 'selectionWithEllipsis' and 'newStr' fields). Keep in mind that since the new content gets inserted on a new line, you usually shouldn't start the string with a newline character.",
+          "description_zh": "要执行的命令：\n- \"updateProperties\"：更新页面属性（需要 'properties' 字段）\n- \"replaceContent\"：替换页面中的所有内容（需要 'newStr' 字段）\n- \"replaceContentRange\"：替换页面中的特定内容（需要 'selectionWithEllipsis' 和 'newStr' 字段）\n- \"insertContentAfter\"：在特定文本后的新行上插入内容（需要 'selectionWithEllipsis' 和 'newStr' 字段）。请记住，由于新内容插入到新行上，因此您通常不应以换行符开始字符串。",
           "enum": [
             "updateProperties",
             "replaceContent",
@@ -213,19 +237,23 @@
           "type": "string"
         },
         "newStr": {
-          "description": "[当 command=\"replaceContent\", \"replaceContentRange\", 或 \"insertContentAfter\" 时必需] 新的字符串。\n- 对于 replaceContent：用于替换所有内容的新字符串\n- 对于 replaceContentRange：用于替换匹配内容的新字符串\n- 对于 insertContentAfter：用于插入到匹配内容之后的新内容",
+          "description": "[Required when command=\"replaceContent\", \"replaceContentRange\", or \"insertContentAfter\"] The new string.\n- For replaceContent: The new string to replace all content with\n- For replaceContentRange: The new string to replace the matched content with\n- For insertContentAfter: The new content to insert after the matched content",
+          "description_zh": "[当 command=\"replaceContent\", \"replaceContentRange\", 或 \"insertContentAfter\" 时为必需] 新字符串。\n- 对于 replaceContent：用于替换所有内容的新字符串\n- 对于 replaceContentRange：用于替换匹配内容的新字符串\n- 对于 insertContentAfter：要在匹配内容后插入的新内容",
           "type": "string"
         },
         "pageUrl": {
-          "description": "要更新的页面的 URL。此 URL 必须已使用 'view' 工具加载，否则将找不到该页面。",
+          "description": "The URL of the page to update. This URL must have already been loaded using the 'view' tool, otherwise the page will not be found.",
+          "description_zh": "要更新的页面的 URL。此 URL 必须已经使用 'view' 工具加载，否则将找不到该页面。",
           "type": "string"
         },
         "parentDataSourceUrl": {
-          "description": "你想要将页面移动到的数据源的 URL。请使用 <data-source> XML 标签中的 url 属性。",
+          "description": "URL of the data source where you want to move the page. Use the url attribute from the <data-source> XML tag.",
+          "description_zh": "您要将页面移动到的数据源的 URL。使用 <data-source> XML 标记中的 url 属性。",
           "type": "string"
         },
         "parentPageUrl": {
-          "description": "你想要将页面移动到的父页面的 URL。请使用 <page> XML 标签中的 url 属性。",
+          "description": "URL of the parent page where you want to move the page. Use the url attribute from the <page> XML tag.",
+          "description_zh": "您要将页面移动到的父页面的 URL。使用 <page> XML 标记中的 url 属性。",
           "type": "string"
         },
         "properties": {
@@ -236,17 +264,20 @@
               "null"
             ]
           },
-          "description": "[当 command=\"updateProperties\" 时必需] 一个用于更新页面属性的 JSON 对象。\n对于数据源中的页面，请使用 <sqlite-table> 中显示的 SQLite 模式定义。\n对于数据源之外的页面，唯一允许的属性是 \"title\"，即页面的标题，使用内联 markdown 格式。\n有关可接受的格式，请参见 “Property Value Formats” (属性值格式) 部分。",
+          "description": "[Required when command=\"updateProperties\"] A JSON object that updates the page's properties.\nFor pages in a data source, use the SQLite schema definition shown in <sqlite-table>.\nFor pages outside of a data source, the only allowed property is \"title\", which is the title of the page in inline markdown format.\nSee the \"Property Value Formats\" section for accepted formats.",
+          "description_zh": "[当 command=\"updateProperties\" 时为必需] 更新页面属性的 JSON 对象。\n对于数据源中的页面，请使用 <sqlite-table> 中显示的 SQLite 模式定义。\n对于数据源之外的页面，唯一允许的属性是 \"title\"，它是内联 markdown 格式的页面标题。\n有关接受的格式，请参阅“属性值格式”部分。",
           "properties": {
             "title": {
-              "description": "要赋予页面的标题，如果它不在数据源中。如果页面在数据源中，请仅使用数据源模式中的属性。",
+              "description": "Title to give the page, if it is not in a data source. If the page is in a data source, only use properties from the data source schema.",
+              "description_zh": "如果页面不在数据源中，则为其指定标题。如果页面在数据源中，则仅使用数据源模式中的属性。",
               "type": "string"
             }
           },
           "type": "object"
         },
         "selectionWithEllipsis": {
-          "description": "[当 command=\"replaceContentRange\" 或 \"insertContentAfter\" 时必需] 要在页面内容中匹配的字符串的唯一开始和结束片段，包括空白。\n不要 (DO NOT) 提供要匹配的整个字符串。相反，提供最多为要匹配字符串的前几个词，一个省略号 (...)，然后是最多为要匹配字符串的最后几个词。请记住，省略号之前的开始序列和省略号之后的结束序列不得重叠；在选择开始序列时，请确保它足够早地结束，以便你能够在省略号之后包含一个合适的、不重叠的结束序列。\n请确保你提供了足够的开始和结束片段，以唯一标识要匹配的字符串。\n例如，要匹配整个部分，请使用 \"selectionWithEllipsis\":\"# 章节标题...最后一段。\"\n不要在你的选择中包含 <content> 标签。",
+          "description": "[Required when command=\"replaceContentRange\" or \"insertContentAfter\"] Unique start and end snippet of the string to match in the page content, including whitespace.\nDO NOT provide the entire string to match. Instead, provide up to the first few words of the string to match, an ellipsis, and then up to the last few words of the string to match. Keep in mind that the start sequence before the ellipsis and the end sequence after the ellipsis must not overlap; when choosing your start sequence, make sure it ends early enough that you will be able to include a suitable non-overlapping end sequence after the ellipsis.\nMake sure you provide enough of the start and end snippet to uniquely identify the string to match.\nFor example, to match an entire section, use \"selectionWithEllipsis\":\"# Section heading...last paragraph.\"\nDo not include <content> tags in your selection.",
+          "description_zh": "[当 command=\"replaceContentRange\" 或 \"insertContentAfter\" 时为必需] 在页面内容中要匹配的字符串的唯一开始和结束片段，包括空格。\n不要提供要匹配的整个字符串。相反，提供要匹配的字符串的前几个单词，一个省略号，然后提供要匹配的字符串的最后几个单词。请记住，省略号之前的开始序列和省略号之后的结束序列不得重叠；选择开始序列时，请确保它结束得早，以便您能够在省略号之后包含合适的非重叠结束序列。\n确保提供足够的开始和结束片段以唯一标识要匹配的字符串。\n例如，要匹配整个部分，请使用 \"selectionWithEllipsis\":\"# Section heading...last paragraph.\"\n不要在您的选择中包含 <content> 标记。",
           "type": "string"
         }
       },
@@ -258,12 +289,14 @@
     }
   },
   {
-    "description": "通过将一个或多个 Notion 页面移动到垃圾箱来删除它们。",
+    "description": "Deletes one or more Notion pages by moving them to trash.",
+    "description_zh": "通过将一个或多个 Notion 页面移至废纸篓来删除它们。",
     "name": "delete-pages",
     "parameters": {
       "properties": {
         "pageUrls": {
-          "description": "要删除的页面的 URL。请使用 <page> XML 标签中的 url 属性。",
+          "description": "URLs of the pages to delete. Use the url attribute from the <page> XML tag.",
+          "description_zh": "要删除的页面的 URL。使用 <page> XML 标记中的 url 属性。",
           "items": {
             "type": "string"
           },
@@ -277,20 +310,23 @@
     }
   },
   {
-    "description": "使用 query-data-sources 对数据源 (Data Sources) 中的页面执行 SQLite 查询，或按 ID 查询特定视图。此工具可用于根据你上下文中可见的特定数据源提取或分析结构化数据。\n\n模式 1：对数据源进行 SQL 查询\n你可以查询和连接 dataSourceUrls 中数据源集合里的任何表，这些表由其 <sqlite-table> 标签定义。\n只允许只读查询。该工具不会执行 UPDATE、INSERT 或 DELETE 操作。\n确保你已经查看了你正在查询的所有数据源。\n在可能的情况下，在 select 子句中包含 url 列。\n\n如果你查询的列是与另一个数据源相关的页面 URL，请先查看该数据源，然后执行 JOIN 查询以获取相关的页面数据。\n\n示例 1：查询 URL 为 https://www.notion.com/signup 的 OKRs 数据源，查找所有状态为 “In progress” 且已到期的页面：\n{\n\tmode: \"sql\",\n\tdataSourceUrls: [\"https://www.notion.com/signup\"],\n\tquery: \"SELECT * FROM \"https://www.notion.com/signup\" WHERE \"Status\" = ? and \"Is due\" = ?\",\n\tparams: [\"In progress\", \"__YES__\"],\n}\n\n示例 2：连接两个相关的数据源，OKRs (https://www.notion.com/signup) 和 Teams (https://www.notion.com/contact-sales)，并获取所有 OKR 及其团队名称：\n{\n\tmode: \"sql\",\n\tdataSourceUrls: [\"https://www.notion.com/signup\", \"https://www.notion.com/contact-sales\"],\n\tquery: \"SELECT o.*, t.\"Team Name\" FROM \"https://www.notion.com/signup\" o JOIN \"https://www.notion.com/contact-sales\" t ON t.url IN (SELECT value FROM json_each(o.\"Team\"))\",\n\tparams: [],\n}\n\nSQLite 提示：\n- 表名是数据源的 URL，并且必须使用双引号\n- 列名：对于带空格/特殊字符的名称使用双引号 \"（\"Task Name\"），对于简单名称则不需要（user_id）\n- 字符串值：使用单引号，并用双单引号进行转义 ('Won''t Fix', 'O''Reilly')\n- 标识符中的双引号：将它们加倍 (\"column\"\"with\"\"quotes\")\n- 保留字必须使用双引号 (\"order\", \"where\")\n\n可查询列规则：\n- 只有以下类型的列可以使用此工具进行查询：[title, person, file, text, checkbox, url, email, phone_number, created_by, last_edited_by, select, multi_select, status, date, created_time, last_edited_time, relation, number, auto_increment_id, location]\n- 其他列类型将不会出现在 SQLite 表或结果中\n- 无法查询的列在用户界面中仍然可见\n\n模式 2：查询特定视图\n示例：查询 URL 为 20ed872b-594c-8102-9f4d-000206937e8e 的特定视图：\n{\n\tmode: \"view\",\n\tviewUrl: \"20ed872b-594c-8102-9f4d-000206937e8e\"\n}\n\n此工具一次最多将返回 100 行，并带有一个 hasMore 标志。\n如果你需要更多行，请使用 hasMore 来决定是否进行分页。",
+    "description": "Use query-data-sources to perform a SQLite query over pages in Data Sources or query a specific view by ID. This tool can be used to extract or analyze structured data based on specific data sources that are visible in your context.\n\nMode 1: SQL Query over Data Sources\nYou can query and join any of the tables in the set of Data Sources in dataSourceUrls, defined by their <sqlite-table> tag.\nOnly read-only queries are allowed. The tool will not perform UPDATE, INSERT, or DELETE operations.\nMake sure you have viewed all the data sources you are querying.\nWhen possible, include the url column in the select clause.\n\nIf you are querying a column that is page URLs relating to another data source, view that data source first and then do a JOIN query to get the related page data.\n\nExample 1: querying the data source OKRs with URL https://www.notion.com/signup, finding all pages with the status \"In progress\" and is due:\n{\n\tmode: \"sql\",\n\tdataSourceUrls: [\"https://www.notion.com/signup\"],\n\tquery: \"SELECT * FROM \"https://www.notion.com/signup\" WHERE \"Status\" = ? and \"Is due\" = ?\",\n\tparams: [\"In progress\", \"__YES__\"],\n}\n\nExample 2: joining two related data sources, OKRs (https://www.notion.com/signup) and Teams (https://www.notion.com/contact-sales), and getting all OKRs with their team names:\n{\n\tmode: \"sql\",\n\tdataSourceUrls: [\"https://www.notion.com/signup\", \"https://www.notion.com/contact-sales\"],\n\tquery: \"SELECT o.*, t.\"Team Name\" FROM \"https://www.notion.com/signup\" o JOIN \"https://www.notion.com/contact-sales\" t ON t.url IN (SELECT value FROM json_each(o.\"Team\"))\",\n\tparams: [],\n}\n\nSQLite hints:\n- The table name is the URL of the data source, and must be double quoted\n- Column names: Double quotes \" for spaces/special chars (\"Task Name\"), none needed for simple names (user_id)\n- String values: Single quotes with doubled quotes for escaping ('Won''t Fix', 'O''Reilly')\n- Double quotes in identifiers: Double them (\"column\"\"with\"\"quotes\")\n- Reserved words must use double quotes (\"order\", \"where\")\n\nQueryable column rules:\n- Only columns of the following types can be queried using this tool: [title, person, file, text, checkbox, url, email, phone_number, created_by, last_edited_by, select, multi_select, status, date, created_time, last_edited_time, relation, number, auto_increment_id, location]\n- Other column types will not be in the SQLite table or results\n- Un-queryable columns are still visible to the user in the UI\n\nMode 2: Query a specific view\nExample: querying a specific view with URL 20ed872b-594c-8102-9f4d-000206937e8e:\n{\n\tmode: \"view\",\n\tviewUrl: \"20ed872b-594c-8102-9f4d-000206937e8e\"\n}\n\nThis tool will return at most 100 rows once, with a hasMore flag.\nIf you need more rows, use the hasMore to decide whether to paginate.",
+    "description_zh": "使用 query-data-sources 对数据源中的页面执行 SQLite 查询或按 ID 查询特定视图。此工具可用于根据上下文中可见的特定数据源提取或分析结构化数据。\n\n模式 1：数据源上的 SQL 查询\n您可以查询和连接 dataSourceUrls 中数据源集中的任何表，这些表由其 <sqlite-table> 标记定义。\n仅允许只读查询。该工具不会执行 UPDATE, INSERT, 或 DELETE 操作。\n确保您已查看正在查询的所有数据源。\n如果可能，请在 select 子句中包含 url 列。\n\n如果您查询的列是与另一个数据源相关的页面 URL，请先查看该数据源，然后执行 JOIN 查询以获取相关的页面数据。\n\n示例 1：查询 URL 为 https://www.notion.com/signup 的数据源 OKR，查找状态为 \"In progress\" 且到期的所有页面：\n{\n\tmode: \"sql\",\n\tdataSourceUrls: [\"https://www.notion.com/signup\"],\n\tquery: \"SELECT * FROM \"https://www.notion.com/signup\" WHERE \"Status\" = ? and \"Is due\" = ?\",\n\tparams: [\"In progress\", \"__YES__\"],\n}\n\n示例 2：连接两个相关数据源，OKR (https://www.notion.com/signup) 和 Teams (https://www.notion.com/contact-sales)，并获取所有 OKR 及其团队名称：\n{\n\tmode: \"sql\",\n\tdataSourceUrls: [\"https://www.notion.com/signup\", \"https://www.notion.com/contact-sales\"],\n\tquery: \"SELECT o.*, t.\"Team Name\" FROM \"https://www.notion.com/signup\" o JOIN \"https://www.notion.com/contact-sales\" t ON t.url IN (SELECT value FROM json_each(o.\"Team\"))\",\n\tparams: [],\n}\n\nSQLite 提示：\n- 表名是数据源的 URL，必须用双引号引起来\n- 列名：空格/特殊字符使用双引号 \" (\"Task Name\")，简单名称不需要 (user_id)\n- 字符串值：单引号，转义时使用双引号 ('Won''t Fix', 'O''Reilly')\n- 标识符中的双引号：双写它们 (\"column\"\"with\"\"quotes\")\n- 保留字必须使用双引号 (\"order\", \"where\")\n\n可查询列规则：\n- 只有以下类型的列可以使用此工具查询：[title, person, file, text, checkbox, url, email, phone_number, created_by, last_edited_by, select, multi_select, status, date, created_time, last_edited_time, relation, number, auto_increment_id, location]\n- 其他列类型将不会出现在 SQLite 表或结果中\n- 不可查询的列对用户在 UI 中仍然可见\n\n模式 2：查询特定视图\n示例：查询 URL 为 20ed872b-594c-8102-9f4d-000206937e8e 的特定视图：\n{\n\tmode: \"view\",\n\tviewUrl: \"20ed872b-594c-8102-9f4d-000206937e8e\"\n}\n\n此工具最多一次返回 100 行，并带有 hasMore 标志。\n如果您需要更多行，请使用 hasMore 决定是否分页。",
     "name": "query-data-sources",
     "parameters": {
       "additionalProperties": false,
       "properties": {
         "dataSourceUrls": {
-          "description": "要查询的数据源的 URL。使用 SQL 查询模式时必需。",
+          "description": "The URLs of the data sources to query. Required when using SQL query mode.",
+          "description_zh": "要查询的数据源的 URL。使用 SQL 查询模式时为必需。",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "mode": {
-          "description": "用于查询的模式。",
+          "description": "The mode to use for the query.",
+          "description_zh": "用于查询的模式。",
           "enum": [
             "sql",
             "view"
@@ -298,18 +334,21 @@
           "type": "string"
         },
         "params": {
-          "description": "要在查询中使用的参数值。",
+          "description": "Values of params to be used in the query.",
+          "description_zh": "查询中使用的参数值。",
           "items": {
             "type": "object"
           },
           "type": "array"
         },
         "query": {
-          "description": "SQLite 查询，可选参数使用 ? 标记。\n必须是只读查询。\n使用 SQL 查询模式时必需。",
+          "description": "SQLite query with optional params as ? marks.\nMust be a readonly query.\nRequired when using SQL query mode.",
+          "description_zh": "这是带有可选参数作为 ? 标记的 SQLite 查询。\n必须是只读查询。\n使用 SQL 查询模式时为必需。",
           "type": "string"
         },
         "viewUrl": {
-          "description": "要查询的特定视图的 URL。使用 view 模式时必需。",
+          "description": "The URL of the specific view to query. Required when using view mode.",
+          "description_zh": "要查询的特定视图的 URL。使用视图模式时为必需。",
           "type": "string"
         }
       },
@@ -320,28 +359,34 @@
     }
   },
   {
-    "description": "创建一个新数据库 (Database)。\n\n将需求格式化为 markdown 项目符号列表。\n每个需求都应该是一个清晰描述你希望数据库创建后所应具备的特性的语句。\n不要 (DO NOT) 尝试在需求中引用用户的消息，因为创建数据库的子代理将无法 (NOT) 看到它们。确保完整地包含所有重要信息。\n如果你需要在需求中引用实体，请使用实体 URL 并提供上下文。\n\n在数据源之间添加双向关联 (two-way relation) 时，请记住，将其添加到一个数据源也会在另一个数据源上添加一个属性，因此请确保不要意外地创建了两次双向关联。\n创建关联 (relations) 时，请在需求中提及两个数据源的 URL，即使其中一个数据源在另一个数据库中。\n关联必须由数据源 URL 定义，而不是页面或数据库 URL。\n\n\n数据库 (Databases) 必须至少有一个视图 (view)。",
+    "description": "Create a new Database.\n\nFormat requirements as a markdown bullet list.\nEach requirement should be a statement that clearly describes something you want to be true about the Database after it has been created.\nDO NOT try to reference the user's messages in the requirements, as the Database create sub-agent will NOT be able to see them. Make sure to include all important information in full.\nIf you need to refer to entities in the requirements, use the entity URLs and provide context.\n\nWhen adding a two-way relation between data sources, remember that adding it to one data source will also add a property on the other, so make sure to not accidentally create a two-way relation twice.\nWhen creating relations, mention both data source URLs in the requirements, even if one data source is in another database.\nRelations must be defined by data source URLs, not page or database URLs.\n\n\nDatabases must have at least one view.",
+    "description_zh": "创建一个新数据库。\n\n将要求格式化为 markdown 项目符号列表。\n每个要求都应该是一个声明，清楚地描述您希望在创建数据库后该数据库的真实情况。\n不要尝试在要求中引用用户的消息，因为数据库创建子代理将无法看到它们。确保完整包含所有重要信息。\n如果您需要在要求中引用实体，请使用实体 URL 并提供上下文。\n\n在数据源之间添加双向关系时，请记住，将其添加到一个数据源也会在另一个数据源上添加一个属性，因此请确保不要意外地创建两次双向关系。\n创建关系时，请在要求中提及两个数据源 URL，即使其中一个数据源位于另一个数据库中也是如此。\n关系必须由数据源 URL 定义，而不是页面或数据库 URL。\n\n\n数据库必须至少有一个视图。",
     "name": "create-database",
     "parameters": {
       "properties": {
         "dataSourceRequirements": {
-          "description": "为创建或更新数据源 (data sources) 的模式 (schema) 提供详细需求。\n如果你想创建多个数据源，请通过在此字符串中为每个数据源指定需求来同时执行所有更新。\n需求不能指定数据源的内容，只能指定模式。如果你想向数据源添加页面，你需要使用 'create-pages' 工具。\n需求不能为属性指定默认值。\n请注意，你不能在单个数据库 (Database) 中创建多个数据源 (Data sources)。你必须创建多个数据库，每个拥有的数据源对应一个数据库。",
+          "description": "Provide detailed requirements for creating or updating the schema of data sources.\nIf you want to create multiple data sources, perform all updates simultaneously by specifying the requirements for each in this string.\nThe requirements cannot specify the content of the data sources, only the schema. If you want to add pages to a data source, you need to use the 'create-pages' tool.\nThe requirements cannot specify default values for properties.\nNote that you cannot create multiple Data sources in a single Database. You must create multiple Databases, one for each owned Data source.",
+          "description_zh": "提供用于创建或更新数据源模式的详细要求。\n如果您想创建多个数据源，请通过在此字符串中指定每个数据源的要求来同时执行所有更新。\n要求不能指定数据源的内容，只能指定模式。如果您想将页面添加到数据源，您需要使用 'create-pages' 工具。\n要求不能指定属性的默认值。\n请注意，您不能在单个数据库中创建多个数据源。您必须创建多个数据库，每个拥有的数据源一个。",
           "type": "string"
         },
         "name": {
-          "description": "数据库 (Database) 的名称。",
+          "description": "The name for the Database.",
+          "description_zh": "数据库的名称。",
           "type": "string"
         },
         "parentPageUrl": {
-          "description": "可选，你想要在其中创建此新数据库 (Database) 的父页面的 URL。请使用 <page> XML 标签中的 url 属性。如果为空，该数据库将作为顶层私有页面创建。",
+          "description": "Optional URL of the parent page where you want to create this new Database. Use the url attribute from the <page> XML tag. If empty, the Database will be created as a top-level private page.",
+          "description_zh": "您要在其中创建此新数据库的父页面的可选 URL。使用 <page> XML 标记中的 url 属性。如果为空，则数据库将被创建为顶级私有页面。",
           "type": "string"
         },
         "replacesBlankParentPage": {
-          "description": "当为 true 时，parentPageUrl 必须指向一个空白页面（没有内容的页面）。该空白页面将被删除，并且数据库 (Database) 将在其位置被创建，继承空白页面的父级。",
+          "description": "When true, the parentPageUrl must point to a blank page (a page with no content). The blank page will be deleted and the Database will be created in its place, inheriting the blank page's parent.",
+          "description_zh": "当为 true 时，parentPageUrl 必须指向空白页面（没有内容的页面）。空白页面将被删除，数据库将取而代之，继承空白页面的父级。",
           "type": "boolean"
         },
         "viewRequirements": {
-          "description": "为创建视图 (views) 提供详细需求。确保提供视图需要使用的任何现有数据源的数据源 URL，例如 https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033。",
+          "description": "Provide detailed requirements for creating the views. Make sure to provide the data source URLs of any existing data sources that need to be used by the views, ie. https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033.",
+          "description_zh": "提供用于创建视图的详细要求。确保提供视图需要使用的任何现有数据源的数据源 URL，即 https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033。",
           "type": "string"
         }
       },
@@ -352,24 +397,29 @@
     }
   },
   {
-    "description": "更新单个现有的数据库 (Database)。\n\n将需求格式化为 markdown 项目符号列表。\n每个需求都应该是一个清晰描述你希望数据库更新后所应具备的特性的语句。\n不要 (DO NOT) 尝试在需求中引用用户的消息，因为更新数据库的子代理将无法 (NOT) 看到它们。确保完整地包含所有重要信息。\n如果你需要在需求中引用实体，请使用实体 URL 并提供上下文。\n如果用户明确要求在日期属性上设置提醒/通知，请在此处向日期属性添加 default_reminder\n不要添加任何未明确要求用以满足用户请求的额外需求。\n\n仅修改指定数据库 (database) 拥有的视图 (views) 或数据源 (data sources)。\n在数据源之间添加双向关联 (two-way relation) 时，请记住，将其添加到一个数据源也会在另一个数据源上添加一个属性，因此请确保不要意外地创建了两次双向关联。\n创建关联 (relations) 时，请在需求中提及两个数据源的 URL，即使其中一个数据源在另一个数据库中。\n关联必须由数据源 URL 定义，而不是页面或数据库 URL。\n\n数据库 (Databases) 必须至少有一个视图 (view)。\n如果你想制作日历 (calendar) 或时间线 (timeline) 视图，请确保数据源至少有一个日期属性。\n\n# 内联数据库 (Inline Databases)\n重要提示：你不能使用此工具更新数据库的 \"inline\" 属性。请使用页面工具 (page tool) 来更新内联属性。\n如果你通过页面工具 (page tools) 创建了另一个内联数据库 (inline database)，并希望创建到它的关联 (relation)，你必须使用 view 工具获取其数据源 URL 来定义该关联。\n\n关于更改数据源属性类型的说明：更改属性的类型是一个有损操作，数据源中所有页面的现有属性数据将会丢失 (LOST)。如果任务要求保留现有数据，你需要按顺序执行以下操作：\n1. 获取数据源中所有页面的现有属性值\n2. 将属性的类型更改为新类型\n3. 将数据源中所有页面的属性值更新为新类型",
+    "description": "Update a single existing Database.\n\nFormat requirements as a markdown bullet list.\nEach requirement should be a statement that clearly describes something you want to be true about the Database after it was updated.\nDO NOT try to reference the user's messages in the requirements, as the Database update sub-agent will NOT be able to see them. Make sure to include all important information in full.\nIf you need to refer to entities in the requirements, use the entity URLs and provide context.\nIf user explicitly asks for reminders/notifications on date properties, add default_reminder to the date property here\nDo not add any additional requirements that are not explicitly needed to fulfill the user's request.\n\nOnly modify views or data sources owned by the specified database.\nWhen adding a two-way relation between data sources, remember that adding it to one data source will also add a property on the other, so make sure to not accidentally create a two-way relation twice.\nWhen creating relations, mention both data source URLs in the requirements, even if one data source is in another database.\nRelations must be defined by data source URLs, not page or database URLs.\n\nDatabases must have at least one view.\nIf you want to make a calendar or timeline view, make sure the data source has at least one date property.\n\n# Inline Databases\nIMPORTANT: You cannot update the \"inline\" attribute of a database with this tool. Use a page tool to update the inline attribute.\nIf you created a different inline database via the page tools and want to create a relation to it, you must use the view tool to obtain its data source URL to define the relation.\n\nNote about changing data source property types: changing the type of a property is a lossy operation, the existing property data will be LOST for all pages in the data source. If the task requires preserving existing data, you need to do the following in order:\n1. Get the existing property values for all pages in the data source\n2. Change the type of the property to the new type\n3. Update the property values for all pages in the data source to the new type",
+    "description_zh": "更新单个现有数据库。\n\n将要求格式化为 markdown 项目符号列表。\n每个要求都应该是一个声明，清楚地描述您希望在更新后该数据库的真实情况。\n不要尝试在要求中引用用户的消息，因为数据库更新子代理将无法看到它们。确保完整包含所有重要信息。\n如果您需要在要求中引用实体，请使用实体 URL 并提供上下文。\n如果用户明确要求对日期属性进行提醒/通知，请在此处将 default_reminder 添加到日期属性\n不要添加任何未明确需要以满足用户请求的额外要求。\n\n仅修改指定数据库拥有的视图或数据源。\n在数据源之间添加双向关系时，请记住，将其添加到一个数据源也会在另一个数据源上添加一个属性，因此请确保不要意外地创建两次双向关系。\n创建关系时，请在要求中提及两个数据源 URL，即使其中一个数据源位于另一个数据库中也是如此。\n关系必须由数据源 URL 定义，而不是页面或数据库 URL。\n\n数据库必须至少有一个视图。\n如果您想制作日历或时间线视图，请确保数据源至少有一个日期属性。\n\n# 内联数据库\n重要：您不能使用此工具更新数据库的 \"inline\" 属性。使用页面工具更新 inline 属性。\n如果您通过页面工具创建了不同的内联数据库并希望创建与其的关系，则必须使用 view 工具获取其数据源 URL 以定义关系。\n\n关于更改数据源属性类型的说明：更改属性类型是有损操作，数据源中所有页面的现有属性数据都将丢失。如果任务需要保留现有数据，则需要按顺序执行以下操作：\n1. 获取数据源中所有页面的现有属性值\n2. 将属性类型更改为新类型\n3. 将数据源中所有页面的属性值更新为新类型",
     "name": "update-database",
     "parameters": {
       "properties": {
         "dataSourceRequirements": {
-          "description": "为更新数据源 (data sources) 的模式 (schema) 提供详细需求。\n如果你想创建或更新多个数据源，请通过在此字符串中为每个数据源指定需求来同时执行所有更新。\n确保提供需要更新的任何现有数据源的数据源 URL，例如 https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033。\n重要说明：此工具不会 (NOT) 对数据源中的页面进行任何更新，只会更新其模式。\n需求不能为属性指定默认值。\n请注意，你不能在单个数据库 (Database) 中创建多个数据源 (Data sources)。你必须创建多个数据库，每个拥有的数据源对应一个数据库。",
+          "description": "Provide detailed requirements for updating the schema of the data sources.\nIf you want to create or update multiple data sources, perform all updates simultaneously by specifying the requirements for each in this string.\nMake sure to provide the data source URLs of any existing data sources that need to be updated, ie. https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033.\nIMPORTANT NOTE: this tool will NOT make any updates to the pages in the data source, only its schema.\nThe requirements cannot specify default values for properties.\nNote that you cannot create multiple data sources in a single database. You must create multiple databases, one for each owned data source.",
+          "description_zh": "提供用于更新数据源模式的详细要求。\n如果您想创建或更新多个数据源，请通过在此字符串中指定每个数据源的要求来同时执行所有更新。\n确保提供需要更新的任何现有数据源的数据源 URL，即 https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033。\n重要说明：此工具不会对数据源中的页面进行任何更新，仅更新其模式。\n要求不能指定属性的默认值。\n请注意，您不能在单个数据库中创建多个数据源。您必须创建多个数据库，每个拥有的数据源一个。",
           "type": "string"
         },
         "databaseUrl": {
-          "description": "要更新的数据库 (Database) 的 URL。",
+          "description": "The URL of the Database to update.",
+          "description_zh": "要更新的数据库的 URL。",
           "type": "string"
         },
         "name": {
-          "description": "可选，数据库 (Database) 的新名称。如果数据库只有一个数据源 (Data Source)，这将自动同步到该数据源的名称。",
+          "description": "Optional, the new name of the Database. If the Database only has one Data Source, this will automatically be synced to the Data Source's name.",
+          "description_zh": "可选，数据库的新名称。如果数据库只有一个数据源，这会自动同步到数据源的名称。",
           "type": "string"
         },
         "viewRequirements": {
-          "description": "为更新视图 (views) 提供详细需求。确保提供视图需要使用的任何现有数据源的数据源 URL，例如 https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033。",
+          "description": "Provide detailed requirements for updating the views. Make sure to provide the data source URLs of any existing data sources that need to be used by the views, ie. https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033.",
+          "description_zh": "提供用于更新视图的详细要求。确保提供视图需要使用的任何现有数据源的数据源 URL，即 https://pinterest.com/pin/create/button/?url=https://www.toolify.ai/ai-news/master-notion-ai-beginners-guide-89033。",
           "type": "string"
         }
       },

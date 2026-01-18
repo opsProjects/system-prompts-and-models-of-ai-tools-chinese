@@ -1,235 +1,586 @@
-
-```
-可用工具及其 JSON SCHEMAS：
+AVAILABLE TOOLS AND THEIR JSON SCHEMAS:
+可用工具及其 JSON 模式：
 
 1. mcp_bulk_file_writer
-   描述: 同时写入多个文件以提高性能
+   Description: Write multiple files simultaneously for improved performance
+   描述：同时写入多个文件以提高性能
    Parameters:
+   参数：
    {
-     "files": {
-       "type": "array",
-       "items": {
-         "type": "object",
-         "properties": {
-           "path": {"type": "string", "description": "文件的绝对路径"},
-           "content": {"type": "string", "description": "文件的原始文本内容"}
-         },
-         "required": ["path", "content"]
-       }
-     },
-     "capture_logs_backend": {"type": "boolean", "default": false},
-     "capture_logs_frontend": {"type": "boolean", "default": false},
-     "status": {"type": "boolean", "default": false}
-   }
+  "files": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path to the file"
+        },
+        "path": {
+          "type": "string",
+          "description": "文件的绝对路径"
+        },
+        "content": {
+          "type": "string",
+          "description": "Raw text content for the file"
+        }
+           "content": {
+          "type": "string",
+          "description": "文件的原始文本内容"
+        }
+      },
+      "required": [
+        "path",
+        "content"
+      ]
+    }
+  },
+  "capture_logs_backend": {
+    "type": "boolean",
+    "default": false
+  },
+  "capture_logs_frontend": {
+    "type": "boolean",
+    "default": false
+  },
+  "status": {
+    "type": "boolean",
+    "default": false
+  }
+}
 
 2. emergent_integrations_manager
-   描述: 获取用于 llm 集成（openai, anthropic, google）的 Emergent LLM 密钥
+   Description: Get the Emergent LLM key for llm integration (openai, anthropic, google)
+   描述：获取用于 LLM 集成（openai、anthropic、google）的 Emergent LLM 密钥
    Parameters: {}
+   参数：{}
 
 3. extract_file_tool
-   描述: 从文档文件中提取特定的结构化数据
+   Description: Extract specific structured data from document files
+   描述：从文档文件中提取特定的结构化数据
    Supported formats: .txt, .js, .py, .html, .css, .json, .xml, .csv, .md, .pdf, .docx, .xlsx, .pptx, .png, .jpg, .jpeg, .webp, .heic, .heif, .wav, .mp3, .mpeg, .aiff, .aac, .ogg, .flac, .mov, .mpeg, .mp4, .mpg, .avi, .wmv, .mpegps, .flv
    Parameters:
+   参数：
    {
-     "source": {"type": "string", "description": "直接 URL 或本地文件路径"},
-     "prompt": {"type": "string", "description": "要提取的具体数据"},
-     "headers": {"type": "object", "description": "额外的 HTTP 标头（可选）"},
-     "timeout": {"type": "integer", "default": 30}
-   }
+  "source": {
+    "type": "string",
+    "description": "Direct URL or local file path"
+  },
+  "source": {
+    "type": "string",
+    "description": "直接 URL 或本地文件路径"
+  },
+  "prompt": {
+    "type": "string",
+    "description": "What specific data to extract"
+  },
+  "prompt": {
+    "type": "string",
+    "description": "要提取什么特定数据"
+  },
+  "headers": {
+    "type": "object",
+    "description": "Additional HTTP headers (optional)"
+  },
+  "headers": {
+    "type": "object",
+    "description": "额外的 HTTP 标头（可选）"
+  },
+  "timeout": {
+    "type": "integer",
+    "default": 30
+  }
+}
 
 4. ask_human
-   描述: 请求人类用户澄清、提供额外信息、确认或反馈
+   Description: Ask human user for clarification, additional info, confirmation, or feedback
+   描述：向人类用户询问澄清、附加信息、确认或反馈
    Parameters:
+   参数：
    {
-     "question": {"type": "string", "description": "要向人类提出的问题"}
-   }
+  "question": {
+    "type": "string",
+    "description": "The question to ask from human"
+  }
+     "question": {
+    "type": "string",
+    "description": "要问人类的问题"
+  }
+}
 
 5. analyze_file_tool
-   描述: 对文档文件进行 AI 驱动的分析，以获取见解和模式
-   Supported formats: 与 extract_file_tool 相同
+   Description: AI-powered analysis on document files for insights and patterns
+   描述：对文档文件进行 AI 驱动的分析以获取见解和模式
+   Supported formats: Same as extract_file_tool
+   支持的格式：与 extract_file_tool 相同
    Parameters:
+   参数：
    {
-     "source": {"type": "string"},
-     "analysis_type": {"type": "string", "enum": ["general", "structure", "content", "sentiment", "security", "performance", "compliance", "custom"]},
-     "query": {"type": "string", "description": "具体的分析问题（可选）"},
-     "headers": {"type": "object"},
-     "timeout": {"type": "integer", "default": 30}
-   }
+  "source": {
+    "type": "string"
+  },
+  "analysis_type": {
+    "type": "string",
+    "enum": [
+      "general",
+      "structure",
+      "content",
+      "sentiment",
+      "security",
+      "performance",
+      "compliance",
+      "custom"
+    ]
+  },
+  "query": {
+    "type": "string",
+    "description": "Specific analysis question (optional)"
+  },
+  "query": {
+    "type": "string",
+    "description": "具体的分析问题（可选）"
+  },
+  "headers": {
+    "type": "object"
+  },
+  "timeout": {
+    "type": "integer",
+    "default": 30
+  }
+}
 
 6. mcp_glob_files
-   描述: 使用 glob 模式进行快速文件模式匹配
+   Description: Fast file pattern matching with glob patterns
+   描述：使用 glob 模式进行快速文件模式匹配
    Parameters:
+   参数：
    {
-     "pattern": {"type": "string", "description": "用于匹配文件的 glob 模式"},
-     "path": {"type": "string", "description": "要搜索的目录（可选）"}
-   }
+  "pattern": {
+    "type": "string",
+    "description": "The glob pattern to match files against"
+  },
+  "pattern": {
+    "type": "string",
+    "description": "用于匹配文件的 glob 模式"
+  },
+  "path": {
+    "type": "string",
+    "description": "Directory to search in (optional)"
+  }
+     "path": {
+    "type": "string",
+    "description": "要搜的目录（可选）"
+  }
+}
 
 7. execute_bash
-   描述: 在终端中执行 bash 命令
+   Description: Execute a bash command in the terminal
+   描述：在终端中执行 bash 命令
    Parameters:
+   参数：
    {
-     "command": {"type": "string", "description": "要执行的 bash 命令"}
-   }
+  "command": {
+    "type": "string",
+    "description": "The bash command to execute"
+  }
+     "command": {
+    "type": "string",
+    "description": "要执行的 bash 命令"
+  }
+}
 
 8. grep_tool
-   描述: 使用 ripgrep 和正则表达式模式搜索文件内容
+   Description: Search file contents using ripgrep with regex patterns
+   描述：使用带有正则表达式模式的 ripgrep 搜索文件内容
    Parameters:
+   参数：
    {
-     "pattern": {"type": "string", "description": "要搜索的正则表达式模式"},
-     "path": {"type": "string", "description": "要搜索的目录或文件"},
-     "case_sensitive": {"type": "boolean"},
-     "context_lines": {"type": "integer"},
-     "include": {"type": "string", "description": "要包含的文件模式"}
-   }
+  "pattern": {
+    "type": "string",
+    "description": "The regex pattern to search for"
+  },
+  "pattern": {
+    "type": "string",
+    "description": "要搜索的正则表达式模式"
+  },
+  "path": {
+    "type": "string",
+    "description": "Directory or file to search in"
+  },
+  "path": {
+    "type": "string",
+    "description": "要搜索的目录或文件"
+  },
+  "case_sensitive": {
+    "type": "boolean"
+  },
+  "context_lines": {
+    "type": "integer"
+  },
+  "include": {
+    "type": "string",
+    "description": "File patterns to include"
+  }
+     "include": {
+    "type": "string",
+    "description": "要包含的文件模式"
+  }
+}
 
 9. mcp_view_file
-   描述: 查看文件或目录内容
+   Description: View file or directory contents
+   描述：查看文件或目录内容
    Parameters:
+   参数：
    {
-     "path": {"type": "string", "description": "要查看的文件的绝对路径"},
-     "view_range": {"type": "array", "items": {"type": "integer"}, "description": "可选的行范围 [start, end]"}
-   }
+  "path": {
+    "type": "string",
+    "description": "The absolute path to the file to view"
+  },
+  "path": {
+    "type": "string",
+    "description": "要查看的文件的绝对路径"
+  },
+  "view_range": {
+    "type": "array",
+    "items": {
+      "type": "integer"
+    },
+    "description": "Optional line range [start, end]"
+  }
+     "view_range": {
+    "type": "array",
+    "items": {
+      "type": "integer"
+    },
+    "description": "可选行范围 [start, end]"
+  }
+}
 
 10. mcp_search_replace
-    描述: 在文件中搜索并替换精确字符串
+    Description: Search and replace exact string in file
+    描述：在文件中搜索并替换确切的字符串
     Parameters:
+    参数：
     {
-      "path": {"type": "string"},
-      "old_str": {"type": "string", "description": "要替换的精确字符串 - 必须完全匹配"},
-      "new_str": {"type": "string", "description": "替换字符串"},
-      "replace_all": {"type": "boolean", "default": false},
-      "run_lint": {"type": "boolean", "default": false},
-      "status": {"type": "boolean", "default": false}
-    }
+  "path": {
+    "type": "string"
+  },
+  "old_str": {
+    "type": "string",
+    "description": "Exact string to replace - must match EXACTLY"
+  },
+  "old_str": {
+    "type": "string",
+    "description": "要替换的确切字符串 - 必须完全匹配"
+  },
+  "new_str": {
+    "type": "string",
+    "description": "Replacement string"
+  },
+  "new_str": {
+    "type": "string",
+    "description": "替换字符串"
+  },
+  "replace_all": {
+    "type": "boolean",
+    "default": false
+  },
+  "run_lint": {
+    "type": "boolean",
+    "default": false
+  },
+  "status": {
+    "type": "boolean",
+    "default": false
+  }
+}
 
 11. mcp_lint_python
-    描述: 使用 ruff 进行 Python linting（代码规范检查）
+    Description: Python linting using ruff
+    描述：使用 ruff 进行 Python linting
     Parameters:
+    参数：
     {
-      "path_pattern": {"type": "string", "description": "文件/目录路径或 glob 模式"},
-      "fix": {"type": "boolean", "default": false},
-      "exclude_patterns": {"type": "array", "items": {"type": "string"}}
+  "path_pattern": {
+    "type": "string",
+    "description": "File/directory path or glob pattern"
+  },
+  "path_pattern": {
+    "type": "string",
+    "description": "文件/目录路径或 glob 模式"
+  },
+  "fix": {
+    "type": "boolean",
+    "default": false
+  },
+  "exclude_patterns": {
+    "type": "array",
+    "items": {
+      "type": "string"
     }
+  }
+}
 
 12. mcp_lint_javascript
-    描述: 使用 ESLint 进行 JavaScript/TypeScript linting（代码规范检查）
+    Description: JavaScript/TypeScript linting using ESLint
+    描述：使用 ESLint 进行 JavaScript/TypeScript linting
     Parameters:
+    参数：
     {
-      "path_pattern": {"type": "string"},
-      "fix": {"type": "boolean", "default": false},
-      "exclude_patterns": {"type": "array", "items": {"type": "string"}}
+  "path_pattern": {
+    "type": "string"
+  },
+  "fix": {
+    "type": "boolean",
+    "default": false
+  },
+  "exclude_patterns": {
+    "type": "array",
+    "items": {
+      "type": "string"
     }
+  }
+}
 
 13. mcp_create_file
-    描述: 创建具有指定内容的新文件
+    Description: Create a new file with specified content
+    描述：使用指定内容创建新文件
     Parameters:
+    参数：
     {
-      "path": {"type": "string", "description": "新文件的绝对路径"},
-      "file_text": {"type": "string", "description": "新文件的内容"},
-      "run_lint": {"type": "boolean", "default": false}
-    }
+  "path": {
+    "type": "string",
+    "description": "The absolute path for the new file"
+  },
+  "path": {
+    "type": "string",
+    "description": "新文件的绝对路径"
+  },
+  "file_text": {
+    "type": "string",
+    "description": "Content for the new file"
+  },
+  "file_text": {
+    "type": "string",
+    "description": "新文件的内容"
+  },
+  "run_lint": {
+    "type": "boolean",
+    "default": false
+  }
+}
 
 14. mcp_insert_text
-    描述: 在文件的指定行号插入文本
+    Description: Insert text at a specific line number in a file
+    描述：在文件的特定行号处插入文本
     Parameters:
+    参数：
     {
-      "path": {"type": "string"},
-      "new_str": {"type": "string"},
-      "insert_line": {"type": "integer", "minimum": 0},
-      "run_lint": {"type": "boolean", "default": false}
-    }
+  "path": {
+    "type": "string"
+  },
+  "new_str": {
+    "type": "string"
+  },
+  "insert_line": {
+    "type": "integer",
+    "minimum": 0
+  },
+  "run_lint": {
+    "type": "boolean",
+    "default": false
+  }
+}
 
 15. finish
-    描述: 提供简明摘要以确保清晰并用于交接
+    Description: Provide concise summary for clarity and handoff
+    描述：提供简洁明了的摘要和交接
     Parameters:
+    参数：
     {
-      "summary": {"type": "string", "description": "根据给定的输入和示例提供摘要"}
-    }
+  "summary": {
+    "type": "string",
+    "description": "Provide summary based on given inputs and examples"
+  }
+      "summary": {
+    "type": "string",
+    "description": "根据给定的输入和示例提供摘要"
+  }
+}
 
 16. get_assets_tool
-    描述: 从数据库检索当前作业/运行的附加资产
+    Description: Retrieve attached assets from the database for the current job/run
+    描述：从数据库中检索当前作业/运行的附加资产
     Parameters: {}
+    参数：{}
 
 17. screenshot_tool
-    描述: 使用 Playwright 执行屏幕截图命令
+    Description: Execute screenshot commands using Playwright
+    描述：使用 Playwright 执行屏幕截图命令
     Parameters:
+    参数：
     {
-      "page_url": {"type": "string"},
-      "script": {"type": "string", "description": "完整的 Python Playwright 脚本"},
-      "capture_logs": {"type": "boolean", "default": false}
-    }
+  "page_url": {
+    "type": "string"
+  },
+  "script": {
+    "type": "string",
+    "description": "Complete Python Playwright script"
+  },
+  "script": {
+    "type": "string",
+    "description": "完整的 Python Playwright 脚本"
+  },
+  "capture_logs": {
+    "type": "boolean",
+    "default": false
+  }
+}
 
 18. mcp_view_bulk
-    描述: 按顺序查看多个文件或目录
+    Description: View multiple files or directories in sequence
+    描述：按顺序查看多个文件或目录
     Parameters:
+    参数：
     {
-      "paths": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 20}
-    }
+  "paths": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "minItems": 1,
+    "maxItems": 20
+  }
+}
 
 19. web_search_tool_v2
-    描述: 在网络上搜索当前信息、近期事件或主题
+    Description: Search the web for current information, recent events, or topics
+    描述：在网络上搜索当前信息、最近发生的事件或主题
     Parameters:
+    参数：
     {
-      "query": {"type": "string"},
-      "search_context_size": {"type": "string", "enum": ["low", "medium", "high"]}
-    }
+  "query": {
+    "type": "string"
+  },
+  "search_context_size": {
+    "type": "string",
+    "enum": [
+      "low",
+      "medium",
+      "high"
+    ]
+  }
+}
 
 20. think
-    描述: 思考某事 - 将思考附加到日志中
+    Description: Think about something - append thought to log
+    描述：思考某事 - 将想法附加到日志
     Parameters:
+    参数：
     {
-      "thought": {"type": "string"}
-    }
+  "thought": {
+    "type": "string"
+  }
+}
 
 21. crawl_tool
-    描述: 从网页上抓取、爬取、检索、获取或提取完整内容
+    Description: Scrape, crawl, retrieve, fetch or extract complete content from webpages
+    描述：从网页抓取、爬取、检索、获取或提取完整内容
     Parameters:
+    参数：
     {
-      "url": {"type": "string"},
-      "extraction_method": {"type": "string", "enum": ["scrape"]},
-      "formats": {"type": "string", "enum": ["html", "markdown", "json"], "default": "markdown"},
-      "question": {"type": "string", "default": "text"}
-    }
+  "url": {
+    "type": "string"
+  },
+  "extraction_method": {
+    "type": "string",
+    "enum": [
+      "scrape"
+    ]
+  },
+  "formats": {
+    "type": "string",
+    "enum": [
+      "html",
+      "markdown",
+      "json"
+    ],
+    "default": "markdown"
+  },
+  "question": {
+    "type": "string",
+    "default": "text"
+  }
+}
 
 22. vision_expert_agent
-    描述: 用于选择和返回相关图片 URL 的 AI 助手
+    Description: AI-powered assistant for selecting and returning relevant image URLs
+    描述：用于选择并返回相关图像 URL 的 AI 助手
     Parameters:
+    参数：
     {
-      "task": {"type": "string", "description": "交给熟练代理执行的详细任务"}
-    }
+  "task": {
+    "type": "string",
+    "description": "Detailed task for the skilled agent to perform"
+  }
+      "task": {
+    "type": "string",
+    "description": "供熟练代理执行的详细任务"
+  }
+}
 
 23. auto_frontend_testing_agent
-    描述: 使用 playwright 和浏览器自动化进行 UI 测试的专家代理
+    Description: Expert agent for UI testing using playwright and browser automation
+    描述：使用 playwright 和浏览器自动化的 UI 测试专家代理
     Parameters:
+    参数：
     {
-      "task": {"type": "string"}
-    }
+  "task": {
+    "type": "string"
+  }
+}
 
 24. deep_testing_backend_v2
-    描述: 使用 curl 测试后端并使用 playwright 测试 UI 的专家代理
+    Description: Expert agent for testing backend using curl and UI using playwright
+    描述：使用 curl 测试后端和使用 playwright 测试 UI 的专家代理
     Parameters:
+    参数：
     {
-      "task": {"type": "string"}
-    }
+  "task": {
+    "type": "string"
+  }
+}
 
 25. integration_playbook_expert_v2
-    描述: 创建用于集成第三方 API 和服务的综合手册（playbooks）
+    Description: Creates comprehensive playbooks for integrating third-party APIs and services
+    描述：创建用于集成第三方 API 和服务的综合手册
     Parameters:
+    参数：
     {
-      "task": {"type": "string"}
-    }
+  "task": {
+    "type": "string"
+  }
+}
 
 26. support_agent
-    描述: 帮助回答有关 Emergent 平台的任何问题
+    Description: Help with any answers about the Emergent platform
+    描述：帮助回答有关 Emergent 平台的任何问题
     Parameters:
+    参数：
     {
-      "task": {"type": "string"}
-    }
+  "task": {
+    "type": "string"
+  }
+}
 
 27. deployment_agent
-    描述: 用于调试 Emergent 平台上本地部署问题的专家代理
+    Description: Expert agent to debug native deployment issues on Emergent
+    描述：用于在 Emergent 上调试本机部署问题的专家代理
     Parameters:
+    参数：
     {
-      "task": {"type": "string"}
-    }
-```
+  "task": {
+    "type": "string"
+  }
+}

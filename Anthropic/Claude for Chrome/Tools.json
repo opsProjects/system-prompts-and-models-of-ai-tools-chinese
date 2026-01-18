@@ -1,0 +1,504 @@
+[
+    {
+      "name": "computer",
+      "description": "Use a mouse and keyboard to interact with a web browser, and take screenshots. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n* Whenever you intend to click on an element like an icon, you should consult a screenshot to determine the coordinates of the element before moving the cursor.\n* If you tried clicking on a program or link but it failed to load, even after waiting, try adjusting your click location so that the tip of the cursor visually falls on the element that you want to click.\n* Make sure to click any buttons, links, icons, etc with the cursor tip in the center of the element. Don't click boxes on their edges unless asked.\n使用鼠标和键盘与 Web 浏览器交互，并截取屏幕截图。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。\n* 每当您打算单击图标等元素时，在移动光标之前，您应该查阅屏幕截图以确定元素的坐标。\n* 如果您尝试单击程序或链接但未能加载（即使在等待之后），请尝试调整单击位置，使光标尖端在视觉上落在您要单击的元素上。\n* 确保使用光标尖端在元素中心单击任何按钮、链接、图标等。除非被要求，否则不要单击框的边缘。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "left_click",
+              "right_click",
+              "type",
+              "screenshot",
+              "wait",
+              "scroll",
+              "key",
+              "left_click_drag",
+              "double_click",
+              "triple_click",
+              "zoom",
+              "scroll_to",
+              "hover"
+            ],
+            "description": "The action to perform:\n* `left_click`: Click the left mouse button at the specified coordinates.\n* `right_click`: Click the right mouse button at the specified coordinates to open context menus.\n* `double_click`: Double-click the left mouse button at the specified coordinates.\n* `triple_click`: Triple-click the left mouse button at the specified coordinates.\n* `type`: Type a string of text.\n* `screenshot`: Take a screenshot of the screen.\n* `wait`: Wait for a specified number of seconds.\n* `scroll`: Scroll up, down, left, or right at the specified coordinates.\n* `key`: Press a specific keyboard key.\n* `left_click_drag`: Drag from start_coordinate to coordinate.\n* `zoom`: Take a screenshot of a specific region for closer inspection.\n* `scroll_to`: Scroll an element into view using its element reference ID from read_page or find tools.\n* `hover`: Move the mouse cursor to the specified coordinates or element without clicking. Useful for revealing tooltips, dropdown menus, or triggering hover states.\n要执行的操作：\n* `left_click`：在指定坐标处单击鼠标左键。\n* `right_click`：在指定坐标处单击鼠标右键以打开上下文菜单。\n* `double_click`：在指定坐标处双击鼠标左键。\n* `triple_click`：在指定坐标处三击鼠标左键。\n* `type`：键入一串文本。\n* `screenshot`：截取屏幕截图。\n* `wait`：等待指定的秒数。\n* `scroll`：在指定坐标处向上、向下、向左或向右滚动。\n* `key`：按特定的键盘键。\n* `left_click_drag`：从 start_coordinate 拖动到 coordinate。\n* `zoom`：截取特定区域的屏幕截图以进行更仔细的检查。\n* `scroll_to`：使用 read_page 或 find 工具中的元素参考 ID 将元素滚动到视图中。\n* `hover`：将鼠标光标移动到指定的坐标或元素而不单击。用于显示工具提示、下拉菜单或触发悬停状态。"
+          },
+          "coordinate": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "(x, y): The x (pixels from the left edge) and y (pixels from the top edge) coordinates. Required for `left_click`, `right_click`, `double_click`, `triple_click`, and `scroll`. For `left_click_drag`, this is the end position. (x, y)：x（距左边缘的像素）和 y（距上边缘的像素）坐标。`left_click`、`right_click`、`double_click`、`triple_click` 和 `scroll` 需要此项。对于 `left_click_drag`，这是结束位置。"
+          },
+          "text": {
+            "type": "string",
+            "description": "The text to type (for `type` action) or the key(s) to press (for `key` action). For `key` action: Provide space-separated keys (e.g., \"Backspace Backspace Delete\"). Supports keyboard shortcuts using the platform's modifier key (use \"cmd\" on Mac, \"ctrl\" on Windows/Linux, e.g., \"cmd+a\" or \"ctrl+a\" for select all). 要键入的文本（用于 `type` 操作）或要按的键（用于 `key` 操作）。对于 `key` 操作：提供以空格分隔的键（例如 \"Backspace Backspace Delete\"）。支持使用平台修饰键的键盘快捷键（Mac 上使用 \"cmd\"，Windows/Linux 上使用 \"ctrl\"，例如 \"cmd+a\" 或 \"ctrl+a\" 全选）。"
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 30,
+            "description": "The number of seconds to wait. Required for `wait`. Maximum 30 seconds. 等待的秒数。`wait` 需要此项。最长 30 秒。"
+          },
+          "scroll_direction": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down",
+              "left",
+              "right"
+            ],
+            "description": "The direction to scroll. Required for `scroll`. 滚动的方向。`scroll` 需要此项。"
+          },
+          "scroll_amount": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "The number of scroll wheel ticks. Optional for `scroll`, defaults to 3. 滚轮刻度数。`scroll` 可选，默认为 3。"
+          },
+          "start_coordinate": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "(x, y): The starting coordinates for `left_click_drag`. (x, y)：`left_click_drag` 的起始坐标。"
+          },
+          "region": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "(x0, y0, x1, y1): The rectangular region to capture for `zoom`. Coordinates define a rectangle from top-left (x0, y0) to bottom-right (x1, y1) in pixels from the viewport origin. Required for `zoom` action. Useful for inspecting small UI elements like icons, buttons, or text. (x0, y0, x1, y1)：要捕获以进行 `zoom` 的矩形区域。坐标定义从视口原点开始的左上角 (x0, y0) 到右下角 (x1, y1) 的矩形（以像素为单位）。`zoom` 操作需要此项。用于检查图标、按钮或文本等小型 UI 元素。"
+          },
+          "repeat": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Number of times to repeat the key sequence. Only applicable for `key` action. Must be a positive integer between 1 and 100. Default is 1. Useful for navigation tasks like pressing arrow keys multiple times. 重复键序列的次数。仅适用于 `key` 操作。必须是 1 到 100 之间的正整数。默认为 1。用于按多次箭头键等导航任务。"
+          },
+          "ref": {
+            "type": "string",
+            "description": "Element reference ID from read_page or find tools (e.g., \"ref_1\", \"ref_2\"). Required for `scroll_to` action. Can be used as alternative to `coordinate` for click actions. read_page 或 find 工具中的元素参考 ID（例如 \"ref_1\"、\"ref_2\"）。`scroll_to` 操作需要此项。可用作点击操作的 `coordinate` 的替代方案。"
+          },
+          "modifiers": {
+            "type": "string",
+            "description": "Modifier keys for click actions. Supports: \"ctrl\", \"shift\", \"alt\", \"cmd\" (or \"meta\"), \"win\" (or \"windows\"). Can be combined with \"+\" (e.g., \"ctrl+shift\", \"cmd+alt\"). Optional. 点击操作的修饰键。支持：\"ctrl\"、\"shift\"、\"alt\"、\"cmd\"（或 \"meta\"）、\"win\"（或 \"windows\"）。可与 \"+\" 组合（例如 \"ctrl+shift\"、\"cmd+alt\"）。可选。"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to execute the action on. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要执行操作的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          }
+        },
+        "required": [
+          "action",
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "find",
+      "description": "Find elements on the page using natural language. Can search for elements by their purpose (e.g., \"search bar\", \"login button\") or by text content (e.g., \"organic mango product\"). Returns up to 20 matching elements with references that can be used with other tools. If more than 20 matches exist, you'll be notified to use a more specific query. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n使用自然语言在页面上查找元素。可以按用途（例如“搜索栏”、“登录按钮”）或文本内容（例如“有机芒果产品”）搜索元素。返回最多 20 个匹配元素及其引用，可与其他工具一起使用。如果匹配项超过 20 个，您将收到通知以使用更具体的查询。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Natural language description of what to find (e.g., \"search bar\", \"add to cart button\", \"product title containing organic\") 要查找内容的自然语言描述（例如“搜索栏”、“添加到购物车按钮”、“包含有机的产品标题”）"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to search in. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要在其中搜索的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          }
+        },
+        "required": [
+          "query",
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "form_input",
+      "description": "Set values in form elements using element reference ID from the read_page tool. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n使用 read_page 工具中的元素参考 ID 设置表单元素中的值。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "description": "Element reference ID from the read_page tool (e.g., \"ref_1\", \"ref_2\") read_page 工具中的元素参考 ID（例如 \"ref_1\"、\"ref_2\"）"
+          },
+          "value": {
+            "type": [
+              "string",
+              "boolean",
+              "number"
+            ],
+            "description": "The value to set. For checkboxes use boolean, for selects use option value or text, for other inputs use appropriate string/number 要设置的值。对于复选框使用布尔值，对于选择框使用选项值或文本，对于其他输入使用适当的字符串/数字"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to set form value in. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要设置表单值的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          }
+        },
+        "required": [
+          "ref",
+          "value",
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "get_page_text",
+      "description": "Extract raw text content from the page, prioritizing article content. Ideal for reading articles, blog posts, or other text-heavy pages. Returns plain text without HTML formatting. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n从页面提取原始文本内容，优先考虑文章内容。非常适合阅读文章、博客文章或其他文本量大的页面。返回不带 HTML 格式的纯文本。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to extract text from. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要从中提取文本的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          }
+        },
+        "required": [
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "gif_creator",
+      "description": "Manage GIF recording and export for browser automation sessions. Control when to start/stop recording browser actions (clicks, scrolls, navigation), then export as an animated GIF with visual overlays (click indicators, action labels, progress bar, watermark). All operations are scoped to the tab's group. When starting recording, take a screenshot immediately after to capture the initial state as the first frame. When stopping recording, take a screenshot immediately before to capture the final state as the last frame. For export, either provide 'coordinate' to drag/drop upload to a page element, or set 'download: true' to download the GIF.\n管理浏览器自动化会话的 GIF 录制和导出。控制何时开始/停止录制浏览器操作（点击、滚动、导航），然后导出为带有视觉叠加（点击指示器、操作标签、进度条、水印）的动画 GIF。所有操作均限定在选项卡组的范围内。开始录制时，请立即拍摄屏幕截图以捕获初始状态作为第一帧。停止录制时，请立即拍摄屏幕截图以捕获最终状态作为最后一帧。对于导出，提供 'coordinate' 以拖放上传到页面元素，或设置 'download: true' 以下载 GIF。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "start_recording",
+              "stop_recording",
+              "export",
+              "clear"
+            ],
+            "description": "Action to perform: 'start_recording' (begin capturing), 'stop_recording' (stop capturing but keep frames), 'export' (generate and export GIF), 'clear' (discard frames) 要执行的操作：'start_recording'（开始捕获）、'stop_recording'（停止捕获但保留帧）、'export'（生成并导出 GIF）、'clear'（丢弃帧）"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to identify which tab group this operation applies to 标识此操作适用于哪个选项卡组的选项卡 ID"
+          },
+          "coordinate": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Viewport coordinates [x, y] for drag & drop upload. Required for 'export' action unless 'download' is true. 拖放上传的视口坐标 [x, y]。除非 'download' 为 true，否则 'export' 操作需要此项。"
+          },
+          "download": {
+            "type": "boolean",
+            "description": "If true, download the GIF instead of drag/drop upload. For 'export' action only. 如果为 true，则下载 GIF 而不是拖放上传。仅适用于 'export' 操作。"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Optional filename for exported GIF (default: 'recording-[timestamp].gif'). For 'export' action only. 导出的 GIF 的可选文件名（默认：'recording-[timestamp].gif'）。仅适用于 'export' 操作。"
+          },
+          "options": {
+            "type": "object",
+            "description": "Optional GIF enhancement options for 'export' action. Properties: showClickIndicators (bool), showDragPaths (bool), showActionLabels (bool), showProgressBar (bool), showWatermark (bool), quality (number 1-30). All default to true except quality (default: 10). 'export' 操作的可选 GIF 增强选项。属性：showClickIndicators (bool)、showDragPaths (bool)、showActionLabels (bool)、showProgressBar (bool)、showWatermark (bool)、quality (number 1-30)。除 quality（默认：10）外，所有默认均为 true。",
+            "properties": {
+              "showClickIndicators": {
+                "type": "boolean",
+                "description": "Show orange circles at click locations (default: true) 在点击位置显示橙色圆圈（默认：true）"
+              },
+              "showDragPaths": {
+                "type": "boolean",
+                "description": "Show red arrows for drag actions (default: true) 显示用于拖动操作的红色箭头（默认：true）"
+              },
+              "showActionLabels": {
+                "type": "boolean",
+                "description": "Show black labels describing actions (default: true) 显示描述操作的黑色标签（默认：true）"
+              },
+              "showProgressBar": {
+                "type": "boolean",
+                "description": "Show orange progress bar at bottom (default: true) 在底部显示橙色进度条（默认：true）"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "description": "Show Claude logo watermark (default: true) 显示 Claude 徽标水印（默认：true）"
+              },
+              "quality": {
+                "type": "number",
+                "description": "GIF compression quality, 1-30 (lower = better quality, slower encoding). Default: 10 GIF 压缩质量，1-30（越低 = 质量越好，编码越慢）。默认：10"
+              }
+            }
+          }
+        },
+        "required": [
+          "action",
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "javascript_tool",
+      "description": "Execute JavaScript code in the context of the current page. The code runs in the page's context and can interact with the DOM, window object, and page variables. Returns the result of the last expression or any thrown errors. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n在当前页面的上下文中执行 JavaScript 代码。代码在页面的上下文中运行，并可以与 DOM、window 对象和页面变量交互。返回最后一个表达式的结果或任何抛出的错误。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Must be set to 'javascript_exec' 必须设置为 'javascript_exec'"
+          },
+          "text": {
+            "type": "string",
+            "description": "The JavaScript code to execute. The code will be evaluated in the page context. The result of the last expression will be returned automatically. Do NOT use 'return' statements - just write the expression you want to evaluate (e.g., 'window.myData.value' not 'return window.myData.value'). You can access and modify the DOM, call page functions, and interact with page variables. 要执行的 JavaScript 代码。代码将在页面上下文中进行评估。最后一个表达式的结果将自动返回。**不要**使用 'return' 语句 - 只需编写您要评估的表达式（例如 'window.myData.value' 而不是 'return window.myData.value'）。您可以访问和修改 DOM、调用页面函数并与页面变量交互。"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to execute the code in. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要在其中执行代码的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          }
+        },
+        "required": [
+          "action",
+          "text",
+          "tabId"
+        ]
+      },
+      "cache_control": {
+        "type": "ephemeral"
+      }
+    },
+    {
+      "name": "navigate",
+      "description": "Navigate to a URL, or go forward/back in browser history. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n导航到 URL，或在浏览器历史记录中前进/后退。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL to navigate to. Can be provided with or without protocol (defaults to https://). Use \"forward\" to go forward in history or \"back\" to go back in history. 要导航到的 URL。可以提供或不提供协议（默认为 https://）。使用 \"forward\" 在历史记录中前进，或使用 \"back\" 在历史记录中后退。"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to navigate. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要导航的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          }
+        },
+        "required": [
+          "url",
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "read_console_messages",
+      "description": "Read browser console messages (console.log, console.error, console.warn, etc.) from a specific tab. Useful for debugging JavaScript errors, viewing application logs, or understanding what's happening in the browser console. Returns console messages from the current domain only. If you don't have a valid tab ID, use tabs_context first to get available tabs. IMPORTANT: Always provide a pattern to filter messages - without a pattern, you may get too many irrelevant messages.\n读取特定选项卡中的浏览器控制台消息（console.log、console.error、console.warn 等）。用于调试 JavaScript 错误、查看应用程序日志或了解浏览器控制台中发生的情况。仅返回当前域的控制台消息。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。重要提示：始终提供用于过滤消息的模式 - 如果没有模式，您可能会收到太多无关消息。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to read console messages from. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要从中读取控制台消息的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          },
+          "onlyErrors": {
+            "type": "boolean",
+            "description": "If true, only return error and exception messages. Default is false (return all message types). 如果为 true，则仅返回错误和异常消息。默认为 false（返回所有消息类型）。"
+          },
+          "clear": {
+            "type": "boolean",
+            "description": "If true, clear the console messages after reading to avoid duplicates on subsequent calls. Default is false. 如果为 true，则在读取后清除控制台消息，以避免在后续调用中重复。默认为 false。"
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Regex pattern to filter console messages. Only messages matching this pattern will be returned (e.g., 'error|warning' to find errors and warnings, 'MyApp' to filter app-specific logs). You should always provide a pattern to avoid getting too many irrelevant messages. 用于过滤控制台消息的正则表达式模式。仅返回与此模式匹配的消息（例如，'error|warning' 用于查找错误和警告，'MyApp' 用于过滤特定于应用程序的日志）。您应该始终提供一种模式以避免收到太多无关消息。"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of messages to return. Defaults to 100. Increase only if you need more results. 要返回的最大消息数。默认为 100。仅在需要更多结果时增加。"
+          }
+        },
+        "required": [
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "read_network_requests",
+      "description": "Read HTTP network requests (XHR, Fetch, documents, images, etc.) from a specific tab. Useful for debugging API calls, monitoring network activity, or understanding what requests a page is making. Returns all network requests made by the current page, including cross-origin requests. Requests are automatically cleared when the page navigates to a different domain. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n读取特定选项卡中的 HTTP 网络请求（XHR、Fetch、文档、图像等）。用于调试 API 调用、监视网络活动或了解页面正在发出的请求。返回当前页面发出的所有网络请求，包括跨域请求。当页面导航到不同域时，请求会自动清除。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to read network requests from. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要从中读取网络请求的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          },
+          "urlPattern": {
+            "type": "string",
+            "description": "Optional URL pattern to filter requests. Only requests whose URL contains this string will be returned (e.g., '/api/' to filter API calls, 'example.com' to filter by domain). 用于过滤请求的可选 URL 模式。仅返回 URL 包含此字符串的请求（例如，'/api/' 用于过滤 API 调用，'example.com' 用于按域过滤）。"
+          },
+          "clear": {
+            "type": "boolean",
+            "description": "If true, clear the network requests after reading to avoid duplicates on subsequent calls. Default is false. 如果为 true，则在读取后清除网络请求，以避免在后续调用中重复。默认为 false。"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum number of requests to return. Defaults to 100. Increase only if you need more results. 要返回的最大请求数。默认为 100。仅在需要更多结果时增加。"
+          }
+        },
+        "required": [
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "read_page",
+      "description": "Get an accessibility tree representation of elements on the page. By default returns all elements including non-visible ones. Output is limited to 50000 characters. If the output exceeds this limit, you will receive an error asking you to specify a smaller depth or focus on a specific element using ref_id. Optionally filter for only interactive elements. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n获取页面上元素的可访问性树表示形式。默认情况下返回所有元素，包括不可见元素。输出限制为 50000 个字符。如果输出超过此限制，您将收到一个错误，要求您指定更小的深度或使用 ref_id 关注特定元素。可选择仅过滤交互式元素。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "string",
+            "enum": [
+              "interactive",
+              "all"
+            ],
+            "description": "Filter elements: \"interactive\" for buttons/links/inputs only, \"all\" for all elements including non-visible ones (default: all elements) 过滤元素：\"interactive\" 仅用于按钮/链接/输入，\"all\" 用于所有元素，包括不可见元素（默认：所有元素）"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to read from. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要从中读取的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          },
+          "depth": {
+            "type": "number",
+            "description": "Maximum depth of the tree to traverse (default: 15). Use a smaller depth if output is too large. 要遍历的树的最大深度（默认：15）。如果输出太大，请使用较小的深度。"
+          },
+          "ref_id": {
+            "type": "string",
+            "description": "Reference ID of a parent element to read. Will return the specified element and all its children. Use this to focus on a specific part of the page when output is too large. 要读取的父元素的参考 ID。将返回指定的元素及其所有子元素。当输出太大时，使用此选项关注页面的特定部分。"
+          }
+        },
+        "required": [
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "resize_window",
+      "description": "Resize the current browser window to specified dimensions. Useful for testing responsive designs or setting up specific screen sizes. If you don't have a valid tab ID, use tabs_context first to get available tabs.\n将当前浏览器窗口调整为指定尺寸。用于测试响应式设计或设置特定屏幕尺寸。如果您没有有效的选项卡 ID，请先使用 tabs_context 获取可用选项卡。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "width": {
+            "type": "number",
+            "description": "Target window width in pixels 目标窗口宽度（像素）"
+          },
+          "height": {
+            "type": "number",
+            "description": "Target window height in pixels 目标窗口高度（像素）"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID to get the window for. Must be a tab in the current group. Use tabs_context first if you don't have a valid tab ID. 要获取其窗口的选项卡 ID。必须是当前组中的选项卡。如果您没有有效的选项卡 ID，请先使用 tabs_context。"
+          }
+        },
+        "required": [
+          "width",
+          "height",
+          "tabId"
+        ]
+      }
+    },
+    {
+      "name": "tabs_context",
+      "description": "Get context information about all tabs in the current tab group 获取当前选项卡组中所有选项卡的上下文信息",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    },
+    {
+      "name": "tabs_create",
+      "description": "Creates a new empty tab in the current tab group 在当前选项卡组中创建一个新的空选项卡",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    },
+    {
+      "type": "custom",
+      "name": "turn_answer_start",
+      "description": "Call this immediately before your text response to the user for this turn. Required every turn - whether or not you made tool calls. After calling, write your response. No more tools after this.\n在此轮向用户做出文本回复之前立即调用此函数。每一轮都需要 - 无论您是否进行了工具调用。调用后，编写您的回复。此后不再有工具。",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    },
+    {
+      "type": "custom",
+      "name": "update_plan",
+      "description": "Update the plan and present it to the user for approval before proceeding.\n在继续之前更新计划并将其呈现给用户以供批准。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of domains you will visit (e.g., ['github.com', 'stackoverflow.com']). These domains will be approved for the session when the user accepts the plan. 您将访问的域列表（例如 ['github.com', 'stackoverflow.com']）。当用户接受计划时，这些域将被批准用于会话。"
+          },
+          "approach": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ordered list of steps you will follow (e.g., ['Navigate to homepage', 'Search for documentation', 'Extract key information']). Be concise - aim for 3-7 steps. 您将遵循的有序步骤列表（例如 ['导航到主页', '搜索文档', '提取关键信息']）。简明扼要 - 目标是 3-7 个步骤。"
+          }
+        },
+        "required": [
+          "domains",
+          "approach"
+        ]
+      }
+    },
+    {
+      "name": "upload_image",
+      "description": "Upload a previously captured screenshot or user-uploaded image to a file input or drag & drop target. Supports two approaches: (1) ref - for targeting specific elements, especially hidden file inputs, (2) coordinate - for drag & drop to visible locations like Google Docs. Provide either ref or coordinate, not both.\n将以前捕获的屏幕截图或用户上传的图像上传到文件输入或拖放目标。支持两种方法：(1) ref - 用于针对特定元素，尤其是隐藏的文件输入，(2) coordinate - 用于拖放到可见位置，如 Google Docs。提供 ref 或 coordinate，不能同时提供两者。",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "imageId": {
+            "type": "string",
+            "description": "ID of a previously captured screenshot (from the computer tool's screenshot action) or a user-uploaded image 以前捕获的屏幕截图（来自 computer 工具的 screenshot 操作）或者用户上传图像的 ID"
+          },
+          "ref": {
+            "type": "string",
+            "description": "Element reference ID from read_page or find tools (e.g., \"ref_1\", \"ref_2\"). Use this for file inputs (especially hidden ones) or specific elements. Provide either ref or coordinate, not both. read_page 或 find 工具中的元素参考 ID（例如 \"ref_1\"、\"ref_2\"）。将其用于文件输入（尤其是隐藏的输入）或特定元素。提供 ref 或 coordinate，不能同时提供两者。"
+          },
+          "coordinate": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Viewport coordinates [x, y] for drag & drop to a visible location. Use this for drag & drop targets like Google Docs. Provide either ref or coordinate, not both. 用于拖放到可见位置的视口坐标 [x, y]。将其用于拖放目标，如 Google Docs。提供 ref 或 coordinate，不能同时提供两者。"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Tab ID where the target element is located. This is where the image will be uploaded to. 目标元素所在的选项卡 ID。这是图像将上传到的位置。"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Optional filename for the uploaded file (default: \"image.png\") 上传文件的可选文件名（默认：\"image.png\"）"
+          }
+        },
+        "required": [
+          "imageId",
+          "tabId"
+        ]
+      }
+    }
+  ]

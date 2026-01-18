@@ -2,21 +2,25 @@
   "tools": [
     {
       "name": "create_artifact",
-      "description": "创建一个包含所有项目文件的综合产物，用于构建具有 Encore.ts 后端和 React 前端的全栈应用程序",
+      "description": "Creates a comprehensive artifact containing all project files for building full-stack applications with Encore.ts backend and React frontend",
+      "description_zh": "创建一个包含所有项目文件的综合工件，用于使用 Encore.ts 后端和 React 前端构建全栈应用程序",
       "parameters": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "description": "项目的描述性标识符，使用蛇形命名法 (snake-case)（例如：'todo-app', 'blog-platform'）"
+            "description": "Descriptive identifier for the project in snake-case (e.g., 'todo-app', 'blog-platform')",
+            "description_zh": "以蛇形命名法表示的项目描述性标识符（例如，'todo-app', 'blog-platform'）"
           },
           "title": {
             "type": "string",
-            "description": "人类可读的项目标题（例如：'Todo App', 'Blog Platform'）"
+            "description": "Human-readable title for the project (e.g., 'Todo App', 'Blog Platform')",
+            "description_zh": "项目的可读标题（例如，'Todo App', 'Blog Platform'）"
           },
           "commit": {
             "type": "string",
-            "description": "简要的变更描述，最多 3-10 个词"
+            "description": "Brief description of changes in 3-10 words max",
+            "description_zh": "在最多 3-10 个单词内简要描述更改"
           },
           "files": {
             "type": "array",
@@ -25,42 +29,62 @@
               "properties": {
                 "path": {
                   "type": "string",
-                  "description": "从项目根目录出发的相对文件路径"
+                  "description": "Relative file path from project root",
+                  "description_zh": "相对于项目根目录的文件路径"
                 },
                 "content": {
                   "type": "string",
-                  "description": "完整的文件内容 - 绝不使用占位符或截断"
+                  "description": "Complete file content - NEVER use placeholders or truncation",
+                  "description_zh": "完整的文件内容 - 切勿使用占位符或截断"
                 },
                 "action": {
                   "type": "string",
-                  "enum": ["create", "modify", "delete", "move"],
-                  "description": "对文件执行的操作"
+                  "enum": [
+                    "create",
+                    "modify",
+                    "delete",
+                    "move"
+                  ],
+                  "description": "Action to perform on the file",
+                  "description_zh": "对文件执行的操作"
                 },
                 "from": {
                   "type": "string",
-                  "description": "移动 (move) 操作的源路径"
+                  "description": "Source path for move operations",
+                  "description_zh": "移动操作的源路径"
                 },
                 "to": {
                   "type": "string",
-                  "description": "移动 (move) 操作的目标路径"
+                  "description": "Target path for move operations",
+                  "description_zh": "移动操作的目标路径"
                 }
               },
-              "required": ["path", "action"]
+              "required": [
+                "path",
+                "action"
+              ]
             }
           }
         },
-        "required": ["id", "title", "commit", "files"]
+        "required": [
+          "id",
+          "title",
+          "commit",
+          "files"
+        ]
       }
     },
     {
       "name": "define_backend_service",
-      "description": "定义一个具有规范结构的 Encore.ts 后端服务",
+      "description": "Defines an Encore.ts backend service with proper structure",
+      "description_zh": "使用适当的结构定义 Encore.ts 后端服务",
       "parameters": {
         "type": "object",
         "properties": {
           "serviceName": {
             "type": "string",
-            "description": "后端服务的名称"
+            "description": "Name of the backend service",
+            "description_zh": "后端服务的名称"
           },
           "endpoints": {
             "type": "array",
@@ -69,27 +93,42 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "description": "唯一的端点名称"
+                  "description": "Unique endpoint name",
+                  "description_zh": "唯一的端点名称"
                 },
                 "method": {
                   "type": "string",
-                  "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"],
-                  "description": "HTTP 方法"
+                  "enum": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE",
+                    "PATCH"
+                  ],
+                  "description": "HTTP method",
+                  "description_zh": "HTTP 方法"
                 },
                 "path": {
                   "type": "string",
-                  "description": "API 路径，可带参数（例如：'/users/:id'）"
+                  "description": "API path with parameters (e.g., '/users/:id')",
+                  "description_zh": "带有参数的 API 路径（例如，'/users/:id'）"
                 },
                 "expose": {
                   "type": "boolean",
-                  "description": "端点是否可公开访问"
+                  "description": "Whether endpoint is publicly accessible",
+                  "description_zh": "端点是否可以公开访问"
                 },
                 "auth": {
                   "type": "boolean",
-                  "description": "端点是否需要身份验证"
+                  "description": "Whether endpoint requires authentication",
+                  "description_zh": "端点是否需要身份验证"
                 }
               },
-              "required": ["name", "method", "path"]
+              "required": [
+                "name",
+                "method",
+                "path"
+              ]
             }
           },
           "database": {
@@ -97,7 +136,8 @@
             "properties": {
               "name": {
                 "type": "string",
-                "description": "数据库名称"
+                "description": "Database name",
+                "description_zh": "数据库名称"
               },
               "tables": {
                 "type": "array",
@@ -106,7 +146,8 @@
                   "properties": {
                     "name": {
                       "type": "string",
-                      "description": "表名"
+                      "description": "Table name",
+                      "description_zh": "表名"
                     },
                     "columns": {
                       "type": "array",
@@ -123,32 +164,43 @@
                             "type": "string"
                           }
                         },
-                        "required": ["name", "type"]
+                        "required": [
+                          "name",
+                          "type"
+                        ]
                       }
                     }
                   },
-                  "required": ["name", "columns"]
+                  "required": [
+                    "name",
+                    "columns"
+                  ]
                 }
               }
             }
           }
         },
-        "required": ["serviceName"]
+        "required": [
+          "serviceName"
+        ]
       }
     },
     {
       "name": "create_react_component",
-      "description": "创建一个使用 TypeScript 和 Tailwind CSS 的 React 组件",
+      "description": "Creates a React component with TypeScript and Tailwind CSS",
+      "description_zh": "使用 TypeScript 和 Tailwind CSS 创建 React 组件",
       "parameters": {
         "type": "object",
         "properties": {
           "componentName": {
             "type": "string",
-            "description": "React 组件的名称"
+            "description": "Name of the React component",
+            "description_zh": "React 组件的名称"
           },
           "path": {
             "type": "string",
-            "description": "组件应被创建的路径"
+            "description": "Path where component should be created",
+            "description_zh": "应该创建组件的路径"
           },
           "props": {
             "type": "array",
@@ -165,51 +217,74 @@
                   "type": "boolean"
                 }
               },
-              "required": ["name", "type"]
+              "required": [
+                "name",
+                "type"
+              ]
             }
           },
           "useBackend": {
             "type": "boolean",
-            "description": "组件是否使用后端 API 调用"
+            "description": "Whether component uses backend API calls",
+            "description_zh": "组件是否使用后端 API 调用"
           },
           "styling": {
             "type": "object",
             "properties": {
               "theme": {
                 "type": "string",
-                "enum": ["light", "dark", "system"],
-                "description": "组件主题"
+                "enum": [
+                  "light",
+                  "dark",
+                  "system"
+                ],
+                "description": "Component theme",
+                "description_zh": "组件主题"
               },
               "responsive": {
                 "type": "boolean",
-                "description": "组件是否是响应式的"
+                "description": "Whether component is responsive",
+                "description_zh": "组件是否响应式"
               },
               "animations": {
                 "type": "boolean",
-                "description": "是否包含微妙的动画效果"
+                "description": "Whether to include subtle animations",
+                "description_zh": "是否包含微妙的动画"
               }
             }
           }
         },
-        "required": ["componentName", "path"]
+        "required": [
+          "componentName",
+          "path"
+        ]
       }
     },
     {
       "name": "setup_authentication",
-      "description": "使用 Clerk 为后端和前端设置身份验证",
+      "description": "Sets up authentication using Clerk for both backend and frontend",
+      "description_zh": "使用 Clerk 为后端和前端设置身份验证",
       "parameters": {
         "type": "object",
         "properties": {
           "provider": {
             "type": "string",
-            "enum": ["clerk"],
-            "description": "身份验证提供商"
+            "enum": [
+              "clerk"
+            ],
+            "description": "Authentication provider",
+            "description_zh": "身份验证提供商"
           },
           "features": {
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["sign-in", "sign-up", "user-profile", "session-management"]
+              "enum": [
+                "sign-in",
+                "sign-up",
+                "user-profile",
+                "session-management"
+              ]
             }
           },
           "protectedRoutes": {
@@ -217,25 +292,31 @@
             "items": {
               "type": "string"
             },
-            "description": "需要身份验证的 API 端点"
+            "description": "API endpoints that require authentication",
+            "description_zh": "需要身份验证的 API 端点"
           }
         },
-        "required": ["provider"]
+        "required": [
+          "provider"
+        ]
       }
     },
     {
       "name": "create_database_migration",
-      "description": "为 Encore.ts 数据库创建一个新的 SQL 迁移文件",
+      "description": "Creates a new SQL migration file for Encore.ts database",
+      "description_zh": "为 Encore.ts 数据库创建新的 SQL 迁移文件",
       "parameters": {
         "type": "object",
         "properties": {
           "migrationName": {
             "type": "string",
-            "description": "迁移的描述性名称"
+            "description": "Descriptive name for the migration",
+            "description_zh": "迁移的描述性名称"
           },
           "version": {
             "type": "integer",
-            "description": "迁移版本号"
+            "description": "Migration version number",
+            "description_zh": "迁移版本号"
           },
           "operations": {
             "type": "array",
@@ -244,59 +325,87 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum": ["CREATE_TABLE", "ALTER_TABLE", "DROP_TABLE", "CREATE_INDEX", "DROP_INDEX"]
+                  "enum": [
+                    "CREATE_TABLE",
+                    "ALTER_TABLE",
+                    "DROP_TABLE",
+                    "CREATE_INDEX",
+                    "DROP_INDEX"
+                  ]
                 },
                 "sql": {
                   "type": "string",
-                  "description": "操作的原始 SQL 语句"
+                  "description": "Raw SQL for the operation",
+                  "description_zh": "操作的原始 SQL"
                 }
               },
-              "required": ["type", "sql"]
+              "required": [
+                "type",
+                "sql"
+              ]
             }
           }
         },
-        "required": ["migrationName", "version", "operations"]
+        "required": [
+          "migrationName",
+          "version",
+          "operations"
+        ]
       }
     },
     {
       "name": "setup_streaming_api",
-      "description": "设置用于实时通信的流式 API",
+      "description": "Sets up streaming APIs for real-time communication",
+      "description_zh": "为实时通信设置流式 API",
       "parameters": {
         "type": "object",
         "properties": {
           "streamType": {
             "type": "string",
-            "enum": ["streamIn", "streamOut", "streamInOut"],
-            "description": "流式 API 的类型"
+            "enum": [
+              "streamIn",
+              "streamOut",
+              "streamInOut"
+            ],
+            "description": "Type of streaming API",
+            "description_zh": "流式 API 的类型"
           },
           "endpoint": {
             "type": "string",
-            "description": "流式端点路径"
+            "description": "Stream endpoint path",
+            "description_zh": "流端点路径"
           },
           "messageTypes": {
             "type": "object",
             "properties": {
               "handshake": {
                 "type": "object",
-                "description": "握手消息结构 (schema)"
+                "description": "Handshake message schema",
+                "description_zh": "握手消息模式"
               },
               "incoming": {
                 "type": "object",
-                "description": "传入消息结构 (schema)"
+                "description": "Incoming message schema",
+                "description_zh": "传入消息模式"
               },
               "outgoing": {
                 "type": "object",
-                "description": "传出消息结构 (schema)"
+                "description": "Outgoing message schema",
+                "description_zh": "传出消息模式"
               }
             }
           }
         },
-        "required": ["streamType", "endpoint"]
+        "required": [
+          "streamType",
+          "endpoint"
+        ]
       }
     },
     {
       "name": "configure_secrets",
-      "description": "为 API 密钥和敏感数据配置密钥管理",
+      "description": "Configures secret management for API keys and sensitive data",
+      "description_zh": "配置 API 密钥和敏感数据的秘密管理",
       "parameters": {
         "type": "object",
         "properties": {
@@ -307,27 +416,36 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "description": "密钥名称（例如：'OpenAIKey', 'DatabaseURL'）"
+                  "description": "Secret name (e.g., 'OpenAIKey', 'DatabaseURL')",
+                  "description_zh": "秘密名称（例如，'OpenAIKey', 'DatabaseURL'）"
                 },
                 "description": {
                   "type": "string",
-                  "description": "描述该密钥的用途"
+                  "description": "Description of what the secret is used for",
+                  "description_zh": "秘密用途的描述"
                 },
                 "required": {
                   "type": "boolean",
-                  "description": "应用运行是否需要此密钥"
+                  "description": "Whether this secret is required for the app to function",
+                  "description_zh": "应用程序运行是否需要此秘密"
                 }
               },
-              "required": ["name", "description"]
+              "required": [
+                "name",
+                "description"
+              ]
             }
           }
         },
-        "required": ["secrets"]
+        "required": [
+          "secrets"
+        ]
       }
     },
     {
       "name": "setup_object_storage",
-      "description": "设置用于文件上传的对象存储桶 (buckets)",
+      "description": "Sets up object storage buckets for file uploads",
+      "description_zh": "为文件上传设置对象存储桶",
       "parameters": {
         "type": "object",
         "properties": {
@@ -338,34 +456,43 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "description": "存储桶名称"
+                  "description": "Bucket name",
+                  "description_zh": "存储桶名称"
                 },
                 "public": {
                   "type": "boolean",
-                  "description": "存储桶内容是否可公开访问"
+                  "description": "Whether bucket contents are publicly accessible",
+                  "description_zh": "存储桶内容是否可以公开访问"
                 },
                 "versioned": {
                   "type": "boolean",
-                  "description": "是否启用对象版本控制"
+                  "description": "Whether to enable object versioning",
+                  "description_zh": "是否启用对象版本控制"
                 },
                 "allowedFileTypes": {
                   "type": "array",
                   "items": {
                     "type": "string"
                   },
-                  "description": "允许的文件 MIME 类型"
+                  "description": "Allowed file MIME types",
+                  "description_zh": "允许的文件 MIME 类型"
                 }
               },
-              "required": ["name"]
+              "required": [
+                "name"
+              ]
             }
           }
         },
-        "required": ["buckets"]
+        "required": [
+          "buckets"
+        ]
       }
     },
     {
       "name": "setup_pubsub",
-      "description": "为事件驱动架构设置 Pub/Sub 主题和订阅",
+      "description": "Sets up Pub/Sub topics and subscriptions for event-driven architecture",
+      "description_zh": "为事件驱动的架构设置 Pub/Sub 主题和订阅",
       "parameters": {
         "type": "object",
         "properties": {
@@ -376,19 +503,28 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "description": "主题名称"
+                  "description": "Topic name",
+                  "description_zh": "主题名称"
                 },
                 "eventSchema": {
                   "type": "object",
-                  "description": "用于事件数据的 TypeScript 接口"
+                  "description": "TypeScript interface for event data",
+                  "description_zh": "事件数据的 TypeScript 接口"
                 },
                 "deliveryGuarantee": {
                   "type": "string",
-                  "enum": ["at-least-once", "exactly-once"],
-                  "description": "消息投递保证"
+                  "enum": [
+                    "at-least-once",
+                    "exactly-once"
+                  ],
+                  "description": "Message delivery guarantee",
+                  "description_zh": "消息传递保证"
                 }
               },
-              "required": ["name", "eventSchema"]
+              "required": [
+                "name",
+                "eventSchema"
+              ]
             }
           },
           "subscriptions": {
@@ -398,34 +534,49 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "description": "订阅名称"
+                  "description": "Subscription name",
+                  "description_zh": "订阅名称"
                 },
                 "topicName": {
                   "type": "string",
-                  "description": "要订阅的主题名称"
+                  "description": "Name of topic to subscribe to",
+                  "description_zh": "要订阅的主题名称"
                 },
                 "handler": {
                   "type": "string",
-                  "description": "处理函数描述"
+                  "description": "Handler function description",
+                  "description_zh": "处理程序函数说明"
                 }
               },
-              "required": ["name", "topicName", "handler"]
+              "required": [
+                "name",
+                "topicName",
+                "handler"
+              ]
             }
           }
         },
-        "required": ["topics"]
+        "required": [
+          "topics"
+        ]
       }
     },
     {
       "name": "create_test_suite",
-      "description": "使用 Vitest 为后端和前端创建测试套件",
+      "description": "Creates test suites using Vitest for backend and frontend",
+      "description_zh": "使用 Vitest 为后端和前端创建测试套件",
       "parameters": {
         "type": "object",
         "properties": {
           "testType": {
             "type": "string",
-            "enum": ["backend", "frontend", "integration"],
-            "description": "要创建的测试类型"
+            "enum": [
+              "backend",
+              "frontend",
+              "integration"
+            ],
+            "description": "Type of tests to create",
+            "description_zh": "要创建的测试类型"
           },
           "testFiles": {
             "type": "array",
@@ -434,11 +585,13 @@
               "properties": {
                 "path": {
                   "type": "string",
-                  "description": "测试文件路径"
+                  "description": "Test file path",
+                  "description_zh": "测试文件路径"
                 },
                 "description": {
                   "type": "string",
-                  "description": "该测试文件涵盖的内容"
+                  "description": "What the test file covers",
+                  "description_zh": "测试文件涵盖的内容"
                 },
                 "testCases": {
                   "type": "array",
@@ -452,63 +605,71 @@
                         "type": "string"
                       }
                     },
-                    "required": ["name"]
+                    "required": [
+                      "name"
+                    ]
                   }
                 }
               },
-              "required": ["path", "testCases"]
+              "required": [
+                "path",
+                "testCases"
+              ]
             }
           }
         },
-        "required": ["testType", "testFiles"]
+        "required": [
+          "testType",
+          "testFiles"
+        ]
       }
     }
   ],
   "guidelines": {
     "code_quality": [
-      "使用 2 个空格进行缩进",
-      "将功能拆分为更小的、专注的模块",
-      "保持文件尽可能小",
-      "始终使用正确的 TypeScript 类型",
-      "遵循一致的命名约定",
-      "包含全面的错误处理",
-      "为复杂逻辑添加有意义的注释"
+      "Use 2 spaces for indentation",
+      "Split functionality into smaller, focused modules",
+      "Keep files as small as possible",
+      "Use proper TypeScript typing throughout",
+      "Follow consistent naming conventions",
+      "Include comprehensive error handling",
+      "Add meaningful comments for complex logic"
     ],
     "backend_requirements": [
-      "所有后端代码必须使用 Encore.ts",
-      "使用 SQL 数据库或对象存储来存储数据",
-      "绝不将数据存储在内存或本地文件中",
-      "所有服务都放在 backend/ 文件夹下",
-      "每个 API 端点放在各自的文件中",
-      "在整个应用程序中使用唯一的端点名称",
-      "使用模板字面量进行数据库查询",
-      "使用注释记录所有 API 端点"
+      "All backend code must use Encore.ts",
+      "Store data using SQL Database or Object Storage",
+      "Never store data in memory or local files",
+      "All services go under backend/ folder",
+      "Each API endpoint in its own file",
+      "Unique endpoint names across the application",
+      "Use template literals for database queries",
+      "Document all API endpoints with comments"
     ],
     "frontend_requirements": [
-      "使用 React、TypeScript 和 Tailwind CSS",
-      "像这样导入后端客户端：import backend from '~backend/client'",
-      "在适当时使用 shadcn/ui 组件",
-      "为所有屏幕尺寸创建响应式设计",
-      "包含微妙的动画和交互效果",
-      "使用 console.error 日志进行适当的错误处理",
-      "将组件拆分为更小的、可重用的模块",
-      "前端代码放在 frontend/ 文件夹中（没有 src/ 子文件夹）"
+      "Use React with TypeScript and Tailwind CSS",
+      "Import backend client as: import backend from '~backend/client'",
+      "Use shadcn/ui components when appropriate",
+      "Create responsive designs for all screen sizes",
+      "Include subtle animations and interactions",
+      "Use proper error handling with console.error logs",
+      "Split components into smaller, reusable modules",
+      "Frontend code goes in frontend/ folder (no src/ subfolder)"
     ],
     "file_handling": [
-      "始终提供完整的文件内容",
-      "绝不使用占位符或截断",
-      "只输出需要更改的文件",
-      "使用 leapFile 进行创建/修改",
-      "使用 leapDeleteFile 进行删除",
-      "使用 leapMoveFile 进行重命名/移动",
-      "排除自动生成的文件（package.json 等）"
+      "Always provide FULL file content",
+      "NEVER use placeholders or truncation",
+      "Only output files that need changes",
+      "Use leapFile for creates/modifications",
+      "Use leapDeleteFile for deletions",
+      "Use leapMoveFile for renames/moves",
+      "Exclude auto-generated files (package.json, etc.)"
     ],
     "security": [
-      "对所有敏感数据使用密钥 (secrets)",
-      "根据请求实现适当的身份验证",
-      "验证所有用户输入",
-      "使用正确的 CORS 设置",
-      "遵循 API 的安全最佳实践"
+      "Use secrets for all sensitive data",
+      "Implement proper authentication when requested",
+      "Validate all user inputs",
+      "Use proper CORS settings",
+      "Follow security best practices for APIs"
     ]
   }
 }

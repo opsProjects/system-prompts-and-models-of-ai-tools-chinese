@@ -1,20 +1,19 @@
-
 [
     {
-        "description": "查找代码库中与搜索查询最相关的代码片段。\n这是一个语义搜索工具，因此查询应该要求在语义上匹配所需的内容。\n如果仅在特定目录中进行搜索有意义，请在 target_directories 字段中指定它们。\n除非有明确的理由使用您自己的搜索查询，否则请直接重用用户带有其措辞的精确查询。\n他们精确的措辞/措辞通常有助于语义搜索查询。保持相同的精确问题格式也可能有所帮助。",
+        "description": "Find snippets of code from the codebase most relevant to the search query.\nThis is a semantic search tool, so the query should ask for something semantically matching what is needed.\nIf it makes sense to only search in particular directories, please specify them in the target_directories field.\nUnless there is a clear reason to use your own search query, please just reuse the user's exact query with their wording.\nTheir exact wording/phrasing can often be helpful for the semantic search query. Keeping the same exact question format can also be helpful.",
         "name": "codebase_search",
         "parameters": {
             "properties": {
                 "explanation": {
-                    "description": "关于为何使用此工具以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal.",
                     "type": "string"
                 },
                 "query": {
-                    "description": "用于查找相关代码的搜索查询。除非有明确的理由不这样做，否则您应该重用用户精确的查询/最近的消息，并保留其措辞。",
+                    "description": "The search query to find relevant code. You should reuse the user's exact query/most recent message with their wording unless there is a clear reason not to.",
                     "type": "string"
                 },
                 "target_directories": {
-                    "description": "要搜索的目录的 Glob 模式",
+                    "description": "Glob patterns for directories to search over",
                     "items": {
                         "type": "string"
                     },
@@ -28,28 +27,28 @@
         }
     },
     {
-        "description": "读取文件的内容。此工具调用的输出将是文件中从 start_line_one_indexed 到 end_line_one_indexed_inclusive（包含）的 1-索引行内容，以及 start_line_one_indexed 和 end_line_one_indexed_inclusive 之外的行的摘要。\n请注意，此调用一次最多可以查看 250 行，最少 200 行。\n\n使用此工具收集信息时，您有责任确保您拥有**完整的上下文**。具体来说，每次调用此命令时，您应该：\n1) 评估您查看的内容是否足以继续您的任务。\n2) 记下未显示的行。\n3) 如果您查看的文件内容不足，并且您怀疑它们可能在未显示的行中，请**主动**再次调用该工具以查看这些行。\n4) 如果不确定，请再次调用此工具以收集更多信息。请记住，部分文件视图可能会遗漏关键的依赖项、导入或功能。\n\n在某些情况下，如果读取一系列行不够，您可以选择读取整个文件。\n读取整个文件通常是浪费且缓慢的，特别是对于大文件（即数百行以上）。因此，您应该**谨慎**使用此选项。\n在大多数情况下，不允许读取整个文件。**仅当文件已被用户编辑或手动附加到对话中时，才允许您读取整个文件**。",
+        "description": "Read the contents of a file. the output of this tool call will be the 1-indexed file contents from start_line_one_indexed to end_line_one_indexed_inclusive, together with a summary of the lines outside start_line_one_indexed and end_line_one_indexed_inclusive.\nNote that this call can view at most 250 lines at a time and 200 lines minimum.\n\nWhen using this tool to gather information, it's your responsibility to ensure you have the COMPLETE context. Specifically, each time you call this command you should:\n1) Assess if the contents you viewed are sufficient to proceed with your task.\n2) Take note of where there are lines not shown.\n3) If the file contents you have viewed are insufficient, and you suspect they may be in lines not shown, proactively call the tool again to view those lines.\n4) When in doubt, call this tool again to gather more information. Remember that partial file views may miss critical dependencies, imports, or functionality.\n\nIn some cases, if reading a range of lines is not enough, you may choose to read the entire file.\nReading entire files is often wasteful and slow, especially for large files (i.e. more than a few hundred lines). So you should use this option sparingly.\nReading the entire file is not allowed in most cases. You are only allowed to read the entire file if it has been edited or manually attached to the conversation by the user.",
         "name": "read_file",
         "parameters": {
             "properties": {
                 "end_line_one_indexed_inclusive": {
-                    "description": "结束读取的 1-索引行号（包含）。",
+                    "description": "The one-indexed line number to end reading at (inclusive).",
                     "type": "integer"
                 },
                 "explanation": {
-                    "description": "关于为何使用此工具以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal.",
                     "type": "string"
                 },
                 "should_read_entire_file": {
-                    "description": "是否读取整个文件。默认为 false。",
+                    "description": "Whether to read the entire file. Defaults to false.",
                     "type": "boolean"
                 },
                 "start_line_one_indexed": {
-                    "description": "开始读取的 1-索引行号（包含）。",
+                    "description": "The one-indexed line number to start reading from (inclusive).",
                     "type": "integer"
                 },
                 "target_file": {
-                    "description": "要读取的文件的路径。您可以使用工作区中的相对路径或绝对路径。如果提供绝对路径，它将保持不变。",
+                    "description": "The path of the file to read. You can use either a relative path in the workspace or an absolute path. If an absolute path is provided, it will be preserved as is.",
                     "type": "string"
                 }
             },
@@ -63,20 +62,20 @@
         }
     },
     {
-        "description": "**提议**一个代表用户运行的命令。\n如果您拥有此工具，请注意您**确实**有能力直接在用户的系统上运行命令。\n请注意，用户必须批准命令才能执行。\n用户可能会拒绝它，或者在批准之前修改命令。如果他们确实进行了更改，请将这些更改考虑在内。\n在用户批准之前，实际命令**不会**执行。用户可能不会立即批准。**不要**假设命令已开始运行。\n如果步骤正在**等待**用户批准，则它**尚未**开始运行。\n使用这些工具时，请遵守以下准则：\n1. 根据对话的内容，您将被告知您是否与上一步在同一个 shell 中或在不同的 shell 中。\n2. 如果在新的 shell 中，除了运行命令之外，您还应该 `cd` 到适当的目录并进行必要的设置。\n3. 如果在同一个 shell 中，请**查看聊天记录**以了解您当前的工作目录。\n4. 对于**任何**需要用户交互的命令，请**假定用户无法进行交互**并**传递非交互式标志**（例如 `npx` 的 `--yes`）。\n5. 如果命令使用分页器，请将 ` | cat` 附加到命令后。\n6. 对于长时间运行/预计无限期运行直到中断的命令，请在后台运行它们。要在后台运行作业，请将 `is_background` 设置为 `true`，而不是更改命令的详细信息。\n7. 命令中不要包含任何换行符。",
+        "description": "PROPOSE a command to run on behalf of the user.\nIf you have this tool, note that you DO have the ability to run commands directly on the USER's system.\nNote that the user will have to approve the command before it is executed.\nThe user may reject it if it is not to their liking, or may modify the command before approving it.  If they do change it, take those changes into account.\nThe actual command will NOT execute until the user approves it. The user may not approve it immediately. Do NOT assume the command has started running.\nIf the step is WAITING for user approval, it has NOT started running.\nIn using these tools, adhere to the following guidelines:\n1. Based on the contents of the conversation, you will be told if you are in the same shell as a previous step or a different shell.\n2. If in a new shell, you should `cd` to the appropriate directory and do necessary setup in addition to running the command.\n3. If in the same shell, LOOK IN CHAT HISTORY for your current working directory.\n4. For ANY commands that would require user interaction, ASSUME THE USER IS NOT AVAILABLE TO INTERACT and PASS THE NON-INTERACTIVE FLAGS (e.g. --yes for npx).\n5. If the command would use a pager, append ` | cat` to the command.\n6. For commands that are long running/expected to run indefinitely until interruption, please run them in the background. To run jobs in the background, set `is_background` to true rather than changing the details of the command.\n7. Dont include any newlines in the command.",
         "name": "run_terminal_cmd",
         "parameters": {
             "properties": {
                 "command": {
-                    "description": "要执行的终端命令",
+                    "description": "The terminal command to execute",
                     "type": "string"
                 },
                 "explanation": {
-                    "description": "关于为何需要运行此命令以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this command needs to be run and how it contributes to the goal.",
                     "type": "string"
                 },
                 "is_background": {
-                    "description": "命令是否应在后台运行",
+                    "description": "Whether the command should be run in the background",
                     "type": "boolean"
                 }
             },
@@ -88,16 +87,16 @@
         }
     },
     {
-        "description": "列出目录的内容。在进行语义搜索或文件读取等更有针对性的工具之前，用于发现的快速工具。有助于在深入研究特定文件之前尝试了解文件结构。可用于探索代码库。",
+        "description": "List the contents of a directory. The quick tool to use for discovery, before using more targeted tools like semantic search or file reading. Useful to try to understand the file structure before diving deeper into specific files. Can be used to explore the codebase.",
         "name": "list_dir",
         "parameters": {
             "properties": {
                 "explanation": {
-                    "description": "关于为何使用此工具以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal.",
                     "type": "string"
                 },
                 "relative_workspace_path": {
-                    "description": "相对于工作区根目录，要列出内容的路径。",
+                    "description": "Path to list contents of, relative to the workspace root.",
                     "type": "string"
                 }
             },
@@ -108,28 +107,28 @@
         }
     },
     {
-        "description": "### 说明：\n这最适合查找精确的文本匹配或正则表达式模式。\n当我们知道要在某些目录/文件类型中搜索的精确符号/函数名称/等时，它比语义搜索更受欢迎。\n\n使用此工具可以使用 `ripgrep` 引擎对文本文件运行快速、精确的正则表达式搜索。\n为避免输出过多，结果最多限制为 50 个匹配项。\n使用包含或排除模式按文件类型或特定路径过滤搜索范围。\n\n- 始终转义特殊的正则表达式字符：` ( ) [ ] { } + * ? ^ $ | . \\`\n- 当这些字符出现在搜索字符串中时，请使用 `\\` 对其进行转义。\n- **不要**执行模糊或语义匹配。\n- 仅返回有效的正则表达式模式字符串。\n\n### 示例：\n| 字面值               | 正则表达式模式            |\n|-----------------------|--------------------------|\n| function(             | function\\(              |\n| value[index]          | value\\[index\\]         |\n| file.txt               | file\\.txt                |\n| user|admin            | user\\|admin             |\n| path\\to\\file         | path\\\\to\\\\file        |\n| hello world           | hello world              |\n| foo\\(bar\\)          | foo\\\\(bar\\\\)         |",
+        "description": "### Instructions:\nThis is best for finding exact text matches or regex patterns.\nThis is preferred over semantic search when we know the exact symbol/function name/etc. to search in some set of directories/file types.\n\nUse this tool to run fast, exact regex searches over text files using the `ripgrep` engine.\nTo avoid overwhelming output, the results are capped at 50 matches.\nUse the include or exclude patterns to filter the search scope by file type or specific paths.\n\n- Always escape special regex characters: ( ) [ ] { } + * ? ^ $ | . \\\n- Use `\\` to escape any of these characters when they appear in your search string.\n- Do NOT perform fuzzy or semantic matches.\n- Return only a valid regex pattern string.\n\n### Examples:\n| Literal               | Regex Pattern            |\n|-----------------------|--------------------------|\n| function(             | function\\(              |\n| value[index]          | value\\[index\\]         |\n| file.txt               | file\\.txt                |\n| user|admin            | user\\|admin             |\n| path\\to\\file         | path\\\\to\\\\file        |\n| hello world           | hello world              |\n| foo\\(bar\\)          | foo\\\\(bar\\\\)         |",
         "name": "grep_search",
         "parameters": {
             "properties": {
                 "case_sensitive": {
-                    "description": "搜索是否应区分大小写",
+                    "description": "Whether the search should be case sensitive",
                     "type": "boolean"
                 },
                 "exclude_pattern": {
-                    "description": "要排除的文件的 Glob 模式",
+                    "description": "Glob pattern for files to exclude",
                     "type": "string"
                 },
                 "explanation": {
-                    "description": "关于为何使用此工具以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal.",
                     "type": "string"
                 },
                 "include_pattern": {
-                    "description": "要包含的文件的 Glob 模式（例如，TypeScript 文件的 '*.ts'）",
+                    "description": "Glob pattern for files to include (e.g. '*.ts' for TypeScript files)",
                     "type": "string"
                 },
                 "query": {
-                    "description": "要搜索的正则表达式模式",
+                    "description": "The regex pattern to search for",
                     "type": "string"
                 }
             },
@@ -140,20 +139,20 @@
         }
     },
     {
-        "description": "使用此工具提议对现有文件进行编辑或创建新文件。\n\n这将由一个不太智能的模型读取，该模型将快速应用编辑。您应该清楚地说明编辑内容，同时最大限度地减少您编写的未更改代码。\n在编写编辑时，您应该按顺序指定每个编辑，并使用特殊注释 `// ... existing code ...` 来表示编辑行之间的未更改代码。\n\n例如：\n\n```\n// ... existing code ...\nFIRST_EDIT\n// ... existing code ...\nSECOND_EDIT\n// ... existing code ...\nTHIRD_EDIT\n// ... existing code ...\n```\n\n您仍应倾向于重复尽可能少的原始文件行来传达更改。\n但是，每个编辑都应包含您正在编辑的代码周围足够的未更改行的上下文，以解决歧义。\n**不要**在不使用 `// ... existing code ...` 注释来指示其缺失的情况下省略预先存在的代码（或注释）跨度。如果您省略现有代码注释，模型可能会意外删除这些行。\n确保清楚地说明编辑应该是什么，以及应该在哪里应用它。\n要创建新文件，只需在 `code_edit` 字段中指定文件的内容即可。\n\n您应该在其他参数之前指定以下参数：`[target_file]`\n\n**始终**在单个 `edit_file` 中对文件进行所有编辑，而不是对同一文件进行多次 `edit_file` 调用。应用模型可以一次处理许多不同的编辑。编辑多个文件时，**始终**并行进行 `edit_file` 调用。",
+        "description": "Use this tool to propose an edit to an existing file or create a new file.\n\nThis will be read by a less intelligent model, which will quickly apply the edit. You should make it clear what the edit is, while also minimizing the unchanged code you write.\nWhen writing the edit, you should specify each edit in sequence, with the special comment `// ... existing code ...` to represent unchanged code in between edited lines.\n\nFor example:\n\n```\n// ... existing code ...\nFIRST_EDIT\n// ... existing code ...\nSECOND_EDIT\n// ... existing code ...\nTHIRD_EDIT\n// ... existing code ...\n```\n\nYou should still bias towards repeating as few lines of the original file as possible to convey the change.\nBut, each edit should contain sufficient context of unchanged lines around the code you're editing to resolve ambiguity.\nDO NOT omit spans of pre-existing code (or comments) without using the `// ... existing code ...` comment to indicate its absence. If you omit the existing code comment, the model may inadvertently delete these lines.\nMake sure it is clear what the edit should be, and where it should be applied.\nTo create a new file, simply specify the content of the file in the `code_edit` field.\n\nYou should specify the following arguments before the others: [target_file]\n\nALWAYS make all edits to a file in a single edit_file instead of multiple edit_file calls to the same file. The apply model can handle many distinct edits at once. When editing multiple files, ALWAYS make parallel edit_file calls.",
         "name": "edit_file",
         "parameters": {
             "properties": {
                 "code_edit": {
-                    "description": "**仅**指定您希望编辑的精确代码行。**切勿**指定或写出未更改的代码。相反，使用您正在编辑的语言的注释来表示所有未更改的代码 - 示例：`// ... existing code ...`",
+                    "description": "Specify ONLY the precise lines of code that you wish to edit. **NEVER specify or write out unchanged code**. Instead, represent all unchanged code using the comment of the language you're editing in - example: `// ... existing code ...`",
                     "type": "string"
                 },
                 "instructions": {
-                    "description": "描述您将要对草图编辑执行的操作的一句话说明。这用于帮助不太智能的模型应用编辑。请使用第一人称描述您将要做的事情。不要重复您之前在普通消息中说过的话。并用它来消除编辑中的不确定性。",
+                    "description": "A single sentence instruction describing what you are going to do for the sketched edit. This is used to assist the less intelligent model in applying the edit. Please use the first person to describe what you are going to do. Dont repeat what you have said previously in normal messages. And use it to disambiguate uncertainty in the edit.",
                     "type": "string"
                 },
                 "target_file": {
-                    "description": "要修改的目标文件。始终将目标文件指定为第一个参数。您可以使用工作区中的相对路径或绝对路径。如果提供绝对路径，它将保持不变。",
+                    "description": "The target file to modify. Always specify the target file as the first argument. You can use either a relative path in the workspace or an absolute path. If an absolute path is provided, it will be preserved as is.",
                     "type": "string"
                 }
             },
@@ -166,20 +165,20 @@
         }
     },
     {
-        "description": "使用此工具提议对现有文件执行搜索和替换操作。\n\n该工具将在指定文件中用 `new_string` 替换 `old_string` 的**一次**出现。\n\n使用此工具的**关键要求**：\n\n1. **唯一性**：`old_string` **必须**唯一标识您要更改的特定实例。这意味着：\n   - 在更改点**之前**至少包含 3-5 行上下文\n   - 在更改点**之后**至少包含 3-5 行上下文\n   - 准确包含文件中出现的所有空格、缩进和周围代码\n\n2. **单个实例**：此工具一次只能更改**一个**实例。如果您需要更改多个实例：\n   - 为每个实例分别调用此工具\n   - 每次调用都必须使用广泛的上下文唯一标识其特定实例\n\n3. **验证**：在使用此工具之前：\n   - 如果存在多个实例，请收集足够的上下文以唯一标识每个实例\n   - 计划对每个实例进行单独的工具调用\n",
+        "description": "Use this tool to propose a search and replace operation on an existing file.\n\nThe tool will replace ONE occurrence of old_string with new_string in the specified file.\n\nCRITICAL REQUIREMENTS FOR USING THIS TOOL:\n\n1. UNIQUENESS: The old_string MUST uniquely identify the specific instance you want to change. This means:\n   - Include AT LEAST 3-5 lines of context BEFORE the change point\n   - Include AT LEAST 3-5 lines of context AFTER the change point\n   - Include all whitespace, indentation, and surrounding code exactly as it appears in the file\n\n2. SINGLE INSTANCE: This tool can only change ONE instance at a time. If you need to change multiple instances:\n   - Make separate calls to this tool for each instance\n   - Each call must uniquely identify its specific instance using extensive context\n\n3. VERIFICATION: Before using this tool:\n   - If multiple instances exist, gather enough context to uniquely identify each one\n   - Plan separate tool calls for each instance\n",
         "name": "search_replace",
         "parameters": {
             "properties": {
                 "file_path": {
-                    "description": "您要在其中搜索和替换的文件的路径。您可以使用工作区中的相对路径或绝对路径。如果提供绝对路径，它将保持不变。",
+                    "description": "The path to the file you want to search and replace in. You can use either a relative path in the workspace or an absolute path. If an absolute path is provided, it will be preserved as is.",
                     "type": "string"
                 },
                 "new_string": {
-                    "description": "替换 `old_string` 的编辑后的文本（必须与 `old_string` 不同）",
+                    "description": "The edited text to replace the old_string (must be different from the old_string)",
                     "type": "string"
                 },
                 "old_string": {
-                    "description": "要替换的文本（在文件中必须是唯一的，并且必须与文件内容完全匹配，包括所有空格和缩进）",
+                    "description": "The text to replace (must be unique within the file, and must match the file contents exactly, including all whitespace and indentation)",
                     "type": "string"
                 }
             },
@@ -192,16 +191,16 @@
         }
     },
     {
-        "description": "基于与文件路径的模糊匹配的快速文件搜索。如果您知道文件路径的一部分但不知道它的确切位置，请使用此选项。响应将限制为 10 个结果。如果需要进一步过滤结果，请使您的查询更具体。",
+        "description": "Fast file search based on fuzzy matching against file path. Use if you know part of the file path but don't know where it's located exactly. Response will be capped to 10 results. Make your query more specific if need to filter results further.",
         "name": "file_search",
         "parameters": {
             "properties": {
                 "explanation": {
-                    "description": "关于为何使用此工具以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal.",
                     "type": "string"
                 },
                 "query": {
-                    "description": "要搜索的模糊文件名",
+                    "description": "Fuzzy filename to search for",
                     "type": "string"
                 }
             },
@@ -213,16 +212,16 @@
         }
     },
     {
-        "description": "删除指定路径的文件。在以下情况下，操作将优雅地失败：\n    - 文件不存在\n    - 操作因安全原因被拒绝\n    - 文件无法删除",
+        "description": "Deletes a file at the specified path. The operation will fail gracefully if:\n    - The file doesn't exist\n    - The operation is rejected for security reasons\n    - The file cannot be deleted",
         "name": "delete_file",
         "parameters": {
             "properties": {
                 "explanation": {
-                    "description": "关于为何使用此工具以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal.",
                     "type": "string"
                 },
                 "target_file": {
-                    "description": "要删除的文件的路径，相对于工作区根目录。",
+                    "description": "The path of the file to delete, relative to the workspace root.",
                     "type": "string"
                 }
             },
@@ -233,12 +232,12 @@
         }
     },
     {
-        "description": "调用一个更智能的模型来应用对指定文件的上次编辑。\n**仅当**差异与您预期的不符时，才在 `edit_file` 工具调用结果之后立即使用此工具，这表明应用更改的模型不够智能，无法遵循您的指示。",
+        "description": "Calls a smarter model to apply the last edit to the specified file.\nUse this tool immediately after the result of an edit_file tool call ONLY IF the diff is not what you expected, indicating the model applying the changes was not smart enough to follow your instructions.",
         "name": "reapply",
         "parameters": {
             "properties": {
                 "target_file": {
-                    "description": "要重新应用上次编辑的文件的相对路径。您可以使用工作区中的相对路径或绝对路径。如果提供绝对路径，它将保持不变。",
+                    "description": "The relative path to the file to reapply the last edit to. You can use either a relative path in the workspace or an absolute path. If an absolute path is provided, it will be preserved as is.",
                     "type": "string"
                 }
             },
@@ -249,16 +248,16 @@
         }
     },
     {
-        "description": "搜索网络以获取有关任何主题的实时信息。当您需要训练数据中可能不可用的最新信息或需要验证当前事实时，请使用此工具。搜索结果将包括来自网页的相关摘要和 URL。这对于有关时事、技术更新或任何需要最新信息的主题的问题特别有用。",
+        "description": "Search the web for real-time information about any topic. Use this tool when you need up-to-date information that might not be available in your training data, or when you need to verify current facts. The search results will include relevant snippets and URLs from web pages. This is particularly useful for questions about current events, technology updates, or any topic that requires recent information.",
         "name": "web_search",
         "parameters": {
             "properties": {
                 "explanation": {
-                    "description": "关于为何使用此工具以及它如何有助于目标的一句话解释。",
+                    "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal.",
                     "type": "string"
                 },
                 "search_term": {
-                    "description": "要在网络上查找的搜索词。要具体并包含相关的关键字以获得更好的结果。对于技术查询，如果相关，请包含版本号或日期。",
+                    "description": "The search term to look up on the web. Be specific and include relevant keywords for better results. For technical queries, include version numbers or dates if relevant.",
                     "type": "string"
                 }
             },
@@ -269,12 +268,12 @@
         }
     },
     {
-        "description": "创建将在聊天 UI 中呈现的 Mermaid 图。通过 `content` 提供原始 Mermaid DSL 字符串。\n使用 `<br/>` 进行换行，始终将图表文本/标签用双引号括起来，不要使用自定义颜色，不要使用 `:::`，也不要使用测试版功能。\n图表将预先渲染以验证语法 - 如果存在任何 Mermaid 语法错误，它们将在响应中返回，以便您可以修复它们。",
+        "description": "Creates a Mermaid diagram that will be rendered in the chat UI. Provide the raw Mermaid DSL string via `content`.\nUse <br/> for line breaks, always wrap diagram texts/tags in double quotes, do not use custom colors, do not use :::, and do not use beta features.\nThe diagram will be pre-rendered to validate syntax - if there are any Mermaid syntax errors, they will be returned in the response so you can fix them.",
         "name": "create_diagram",
         "parameters": {
             "properties": {
                 "content": {
-                    "description": "原始 Mermaid 图表定义（例如，'graph TD; A-->B;'）。",
+                    "description": "Raw Mermaid diagram definition (e.g., 'graph TD; A-->B;').",
                     "type": "string"
                 }
             },
@@ -285,32 +284,32 @@
         }
     },
     {
-        "description": "使用此工具编辑 jupyter notebook 单元格。**仅**使用此工具编辑 notebook。\n\n此工具支持编辑现有单元格和创建新单元格：\n\t- 如果您需要编辑现有单元格，请将 `is_new_cell` 设置为 `false` 并提供 `old_string` 和 `new_string`。\n\t\t-- 该工具将在指定单元格中用 `new_string` 替换 `old_string` 的**一次**出现。\n\t- 如果您需要创建新单元格，请将 `is_new_cell` 设置为 `true` 并提供 `new_string`（并保持 `old_string` 为空）。\n\t- **至关重要**的是，您正确设置 `is_new_cell` 标志！\n\t- 此工具**不**支持单元格删除，但您可以通过将空字符串作为 `new_string` 传递来删除单元格的内容。\n\n其他要求：\n\t- 单元格索引是 0-based。\n\t- `old_string` 和 `new_string` 应该是有效的单元格内容，即**不带** notebook 文件在底层使用的任何 JSON 语法。\n\t- `old_string` **必须**唯一标识您要更改的特定实例。这意味着：\n\t\t-- 在更改点**之前**至少包含 3-5 行上下文\n\t\t-- 在更改点**之后**至少包含 3-5 行上下文\n\t- 此工具一次只能更改**一个**实例。如果您需要更改多个实例：\n\t\t-- 为每个实例分别调用此工具\n\t\t-- 每次调用都必须使用广泛的上下文唯一标识其特定实例\n\t- 此工具可能会将 markdown 单元格保存为“raw”单元格。不要尝试更改它，这没关系。我们需要它来正确显示差异。\n\t- 如果您需要创建新的 notebook，只需将 `is_new_cell` 设置为 `true` 并将 `cell_idx` 设置为 `0`。\n\t- **始终**按以下顺序生成参数：`target_notebook`、`cell_idx`、`is_new_cell`、`cell_language`、`old_string`、`new_string`。\n\t- 优先编辑现有单元格而不是创建新单元格！\n",
+        "description": "Use this tool to edit a jupyter notebook cell. Use ONLY this tool to edit notebooks.\n\nThis tool supports editing existing cells and creating new cells:\n\t- If you need to edit an existing cell, set 'is_new_cell' to false and provide the 'old_string' and 'new_string'.\n\t\t-- The tool will replace ONE occurrence of 'old_string' with 'new_string' in the specified cell.\n\t- If you need to create a new cell, set 'is_new_cell' to true and provide the 'new_string' (and keep 'old_string' empty).\n\t- It's critical that you set the 'is_new_cell' flag correctly!\n\t- This tool does NOT support cell deletion, but you can delete the content of a cell by passing an empty string as the 'new_string'.\n\nOther requirements:\n\t- Cell indices are 0-based.\n\t- 'old_string' and 'new_string' should be a valid cell content, i.e. WITHOUT any JSON syntax that notebook files use under the hood.\n\t- The old_string MUST uniquely identify the specific instance you want to change. This means:\n\t\t-- Include AT LEAST 3-5 lines of context BEFORE the change point\n\t\t-- Include AT LEAST 3-5 lines of context AFTER the change point\n\t- This tool can only change ONE instance at a time. If you need to change multiple instances:\n\t\t-- Make separate calls to this tool for each instance\n\t\t-- Each call must uniquely identify its specific instance using extensive context\n\t- This tool might save markdown cells as \"raw\" cells. Don't try to change it, it's fine. We need it to properly display the diff.\n\t- If you need to create a new notebook, just set 'is_new_cell' to true and cell_idx to 0.\n\t- ALWAYS generate arguments in the following order: target_notebook, cell_idx, is_new_cell, cell_language, old_string, new_string.\n\t- Prefer editing existing cells over creating new ones!\n",
         "name": "edit_notebook",
         "parameters": {
             "properties": {
                 "cell_idx": {
-                    "description": "要编辑的单元格的索引（0-based）",
+                    "description": "The index of the cell to edit (0-based)",
                     "type": "number"
                 },
                 "cell_language": {
-                    "description": "要编辑的单元格的语言。应该**严格**是以下之一：'python'、'markdown'、'javascript'、'typescript'、'r'、'sql'、'shell'、'raw' 或 'other'。",
+                    "description": "The language of the cell to edit. Should be STRICTLY one of these: 'python', 'markdown', 'javascript', 'typescript', 'r', 'sql', 'shell', 'raw' or 'other'.",
                     "type": "string"
                 },
                 "is_new_cell": {
-                    "description": "如果为 true，将在指定的单元格索引处创建一个新单元格。如果为 false，将编辑指定单元格索引处的单元格。",
+                    "description": "If true, a new cell will be created at the specified cell index. If false, the cell at the specified cell index will be edited.",
                     "type": "boolean"
                 },
                 "new_string": {
-                    "description": "替换 `old_string` 的编辑后的文本或新单元格的内容。",
+                    "description": "The edited text to replace the old_string or the content for the new cell.",
                     "type": "string"
                 },
                 "old_string": {
-                    "description": "要替换的文本（在单元格中必须是唯一的，并且必须与单元格内容完全匹配，包括所有空格和缩进）。",
+                    "description": "The text to replace (must be unique within the cell, and must match the cell contents exactly, including all whitespace and indentation).",
                     "type": "string"
                 },
                 "target_notebook": {
-                    "description": "您要编辑的 notebook 文件的路径。您可以使用工作区中的相对路径或绝对路径。如果提供绝对路径，它将保持不变。",
+                    "description": "The path to the notebook file you want to edit. You can use either a relative path in the workspace or an absolute path. If an absolute path is provided, it will be preserved as is.",
                     "type": "string"
                 }
             },

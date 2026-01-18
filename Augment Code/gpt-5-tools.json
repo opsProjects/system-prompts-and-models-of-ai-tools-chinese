@@ -1,550 +1,548 @@
-
 {
-  "tools": [
-    {
-      "type": "function",
-      "function": {
-        "name": "view",
-        "description": "查看文件或目录。对于文件，可以选择使用正则表达式模式在文件内搜索，或限制行范围。除非明确请求，否则默认排除 'electron' 文件夹。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": ["file", "directory"],
-              "description": "是查看单个文件还是目录列表（最多 2 级）。"
-            },
-            "path": {
-              "type": "string",
-              "description": "相对于存储库根目录的路径。"
-            },
-            "view_range": {
-              "type": "array",
-              "items": { "type": "integer" },
-              "minItems": 2,
-              "maxItems": 2,
-              "description": "可选的 [起始行, 结束行] 1-based 包含范围，用于文件。"
-            },
-            "search_query_regex": {
-              "type": "string",
-              "description": "可选的正则表达式，用于在文件内容中搜索（单行正则表达式）。"
-            },
-            "case_sensitive": {
-              "type": "boolean",
-              "default": false,
-              "description": "正则表达式搜索是否区分大小写。"
-            },
-            "context_lines_before": {
-              "type": "integer",
-              "default": 5,
-              "description": "在每个正则表达式匹配之前包含的上下文行数。"
-            },
-            "context_lines_after": {
-              "type": "integer",
-              "default": 5,
-              "description": "在每个正则表达式匹配之后包含的上下文行数。"
-            }
-          },
-          "required": ["type", "path"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "grep-search",
-        "description": "在多个文件/目录或整个代码库中进行搜索。用于在多个文件中查找文本/符号。除非明确覆盖，否则默认排除 'electron/**'。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "query": {
-              "type": "string",
-              "description": "要搜索的文本或正则表达式。"
-            },
-            "paths": {
-              "type": "array",
-              "items": { "type": "string" },
-              "description": "可选的目录或文件列表，用于限制搜索范围。"
-            },
-            "include_globs": {
-              "type": "array",
-              "items": { "type": "string" },
-              "description": "可选的 glob 模式以包含（例如，'src/**/*.ts'）。"
-            },
-            "exclude_globs": {
-              "type": "array",
-              "items": { "type": "string" },
-              "default": ["electron/**"],
-              "description": "可选的 glob 模式以排除。默认为排除 'electron' 文件夹。"
-            },
-            "case_sensitive": {
-              "type": "boolean",
-              "default": false,
-              "description": "搜索是否区分大小写。"
-            },
-            "context_lines_before": {
-              "type": "integer",
-              "default": 5,
-              "description": "每个匹配项之前的上下文行数。"
-            },
-            "context_lines_after": {
-              "type": "integer",
-              "default": 5,
-              "description": "每个匹配项之后的上下文行数。"
-            },
-            "max_results": {
-              "type": "integer",
-              "default": 5000,
-              "description": "限制返回的匹配项数量。"
-            }
-          },
-          "required": ["query"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "codebase-retrieval",
-        "description": "在不知道从哪里查找时，在当前代码库中进行高级检索，以定位相关文件、类、函数或模式。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "information_request": {
-              "type": "string",
-              "description": "对需要查找的内容进行自然语言描述。"
-            }
-          },
-          "required": ["information_request"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "git-commit-retrieval",
-        "description": "使用存储库的提交历史来查找过去如何进行类似更改或更改发生的原因。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "information_request": {
-              "type": "string",
-              "description": "关于过去更改的问题（例如，某个功能是如何/为何实现的）。"
-            }
-          },
-          "required": ["information_request"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "str-replace-editor",
-        "description": "安全地编辑现有文件。使用 'str_replace' 进行具有明确行范围的原位替换，或使用 'insert' 在特定行插入新内容。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "command": {
-              "type": "string",
-              "enum": ["str_replace", "insert"],
-              "description": "编辑模式：'str_replace' 或 'insert'。"
-            },
-            "path": {
-              "type": "string",
-              "description": "要编辑的文件的路径，相对于仓库根目录。"
-            },
-            "instruction_reminder": {
-              "type": "string",
-              "description": "必须完全是：'ALWAYS BREAK DOWN EDITS INTO SMALLER CHUNKS OF AT MOST 150 LINES EACH。'"
-            },
-            "insert_line_1": {
-              "type": "integer",
-              "description": "对于 'insert'：在其后插入的 1-based 行号。使用 0 在文件最开始处插入。"
-            },
-            "new_str_1": {
-              "type": "string",
-              "description": "对于 'str_replace' 和 'insert'：新内容。"
-            },
-            "old_str_1": {
-              "type": "string",
-              "description": "对于 'str_replace'：要替换的精确原始文本（必须完全匹配，包括空白字符）。"
-            },
-            "old_str_start_line_number_1": {
-              "type": "integer",
-              "description": "对于 'str_replace'：old_str_1 的 1-based 起始行号。"
-            },
-            "old_str_end_line_number_1": {
-              "type": "integer",
-              "description": "对于 'str_replace'：old_str_1 的 1-based 结束行号（包含）。"
-            }
-          },
-          "required": ["command", "path", "instruction_reminder"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "save-file",
-        "description": "创建一个新文件。不修改现有文件。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "instructions_reminder": {
-              "type": "string",
-              "description": "必须完全是：'LIMIT THE FILE CONTENT TO AT MOST 300 LINES. IF MORE CONTENT NEEDS TO BE ADDED USE THE str-replace-editor TOOL TO EDIT THE FILE AFTER IT HAS BEEN CREATED。'"
-            },
-            "path": {
-              "type": "string",
-              "description": "新文件的路径，相对于仓库根目录。"
-            },
-            "file_content": {
-              "type": "string",
-              "description": "要写入新文件的内容。"
-            },
-            "add_last_line_newline": {
-              "type": "boolean",
-              "default": true,
-              "description": "是否确保末尾有换行符。"
-            }
-          },
-          "required": ["instructions_reminder", "path", "file_content"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "remove-files",
-        "description": "以可逆的方式从工作区删除文件。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "file_paths": {
-              "type": "array",
-              "items": { "type": "string" },
-              "description": "要删除的文件路径列表，相对于仓库根目录。"
-            }
-          },
-          "required": ["file_paths"],
-          "additionalProperties": false
-        }
-      }
-    },
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "view",
+        "description": "View a file or directory. For files, optionally search within the file using a regex pattern or limit to a line range. Exclude the 'electron' folder by default unless explicitly requested. 查看文件或目录。对于文件，可选择使用正则表达式模式在文件中搜索或限制为行范围。默认排除 'electron' 文件夹，除非明确请求。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["file", "directory"],
+              "description": "Whether to view a single file or a directory listing (up to 2 levels). 查看单个文件还是目录列表（最多 2 层）。"
+            },
+            "path": {
+              "type": "string",
+              "description": "Path relative to the repository root. 相对于存储库根目录的路径。"
+            },
+            "view_range": {
+              "type": "array",
+              "items": { "type": "integer" },
+              "minItems": 2,
+              "maxItems": 2,
+              "description": "Optional [start_line, end_line] 1-based inclusive range for files. 可选的 [start_line, end_line] 基于 1 的包含范围（用于文件）。"
+            },
+            "search_query_regex": {
+              "type": "string",
+              "description": "Optional regex to search within file content (single-line regex). 可选的正则表达式，用于在文件内容中搜索（单行正则表达式）。"
+            },
+            "case_sensitive": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether the regex search is case-sensitive. 正则表达式搜索是否区分大小写。"
+            },
+            "context_lines_before": {
+              "type": "integer",
+              "default": 5,
+              "description": "Lines of context to include before each regex match. 每个正则表达式匹配之前包含的上下文行数。"
+            },
+            "context_lines_after": {
+              "type": "integer",
+              "default": 5,
+              "description": "Lines of context to include after each regex match. 每个正则表达式匹配之后包含的上下文行数。"
+            }
+          },
+          "required": ["type", "path"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "grep-search",
+        "description": "Search across multiple files/directories or the whole codebase. Use for finding text/symbols across many files. Excludes 'electron/**' by default unless explicitly overridden. 在多个文件/目录或整个代码库中搜索。用于在许多文件中查找文本/符号。默认排除 'electron/**'，除非明确覆盖。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Text or regex to search for. 要搜索的文本或正则表达式。"
+            },
+            "paths": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Optional list of directories or files to limit the search scope. 可选的目录或文件列表，用于限制搜索范围。"
+            },
+            "include_globs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Optional glob patterns to include (e.g., 'src/**/*.ts'). 可选的包含 glob 模式（例如 'src/**/*.ts'）。"
+            },
+            "exclude_globs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["electron/**"],
+              "description": "Optional glob patterns to exclude. Defaults to excluding the 'electron' folder. 可选的排除 glob 模式。默认为排除 'electron' 文件夹。"
+            },
+            "case_sensitive": {
+              "type": "boolean",
+              "default": false,
+              "description": "Case sensitivity for the search. 搜索的大小写敏感性。"
+            },
+            "context_lines_before": {
+              "type": "integer",
+              "default": 5,
+              "description": "Lines of context before each match. 每个匹配之前的上下文行数。"
+            },
+            "context_lines_after": {
+              "type": "integer",
+              "default": 5,
+              "description": "Lines of context after each match. 每个匹配之后的上下文行数。"
+            },
+            "max_results": {
+              "type": "integer",
+              "default": 5000,
+              "description": "Limit the number of matches returned. 限制返回的匹配数量。"
+            }
+          },
+          "required": ["query"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "codebase-retrieval",
+        "description": "High-level retrieval across the current codebase to locate relevant files, classes, functions, or patterns when you don't know where to look. 跨当前代码库的高级检索，以便在不知道从哪里查找时定位相关文件、类、函数或模式。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "information_request": {
+              "type": "string",
+              "description": "Natural-language description of what you need to find. 您需要查找的内容的自然语言描述。"
+            }
+          },
+          "required": ["information_request"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git-commit-retrieval",
+        "description": "Use the repository’s commit history to find how similar changes were made in the past or why changes happened. 使用存储库的提交历史记录查找过去如何进行类似更改或发生更改的原因。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "information_request": {
+              "type": "string",
+              "description": "Question about past changes (e.g., how/why a feature was implemented). 关于过去更改的问题（例如，如何/为什么实现某个功能）。"
+            }
+          },
+          "required": ["information_request"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "str-replace-editor",
+        "description": "Edit existing files safely. Use 'str_replace' for in-place replacements with explicit line ranges, or 'insert' to insert new content at a specific line. 安全地编辑现有文件。使用 'str_replace' 进行具有明确行范围的原位替换，或使用 'insert' 在特定行插入新内容。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "enum": ["str_replace", "insert"],
+              "description": "Edit mode: 'str_replace' or 'insert'. 编辑模式：'str_replace' 或 'insert'。"
+            },
+            "path": {
+              "type": "string",
+              "description": "Path of the file to edit, relative to repo root. 要编辑的文件的路径，相对于 repo 根目录。"
+            },
+            "instruction_reminder": {
+              "type": "string",
+              "description": "Must be exactly: 'ALWAYS BREAK DOWN EDITS INTO SMALLER CHUNKS OF AT MOST 150 LINES EACH.' 必须准确为：'ALWAYS BREAK DOWN EDITS INTO SMALLER CHUNKS OF AT MOST 150 LINES EACH.'"
+            },
+            "insert_line_1": {
+              "type": "integer",
+              "description": "For 'insert': 1-based line number after which to insert. Use 0 to insert at the very beginning. 对于 'insert'：在其后插入的基于 1 的行号。使用 0 在最开始处插入。"
+            },
+            "new_str_1": {
+              "type": "string",
+              "description": "For 'str_replace' and 'insert': the new content. 对于 'str_replace' 和 'insert'：新内容。"
+            },
+            "old_str_1": {
+              "type": "string",
+              "description": "For 'str_replace': the exact original text to replace (must match exactly, including whitespace). 对于 'str_replace'：要替换的确切原始文本（必须完全匹配，包括空格）。"
+            },
+            "old_str_start_line_number_1": {
+              "type": "integer",
+              "description": "For 'str_replace': 1-based start line of old_str_1. 对于 'str_replace'：old_str_1 基于 1 的起始行。"
+            },
+            "old_str_end_line_number_1": {
+              "type": "integer",
+              "description": "For 'str_replace': 1-based end line of old_str_1 (inclusive). 对于 'str_replace'：old_str_1 基于 1 的结束行（包含）。"
+            }
+          },
+          "required": ["command", "path", "instruction_reminder"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "save-file",
+        "description": "Create a new file. Does not modify existing files. 创建新文件。不修改现有文件。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "instructions_reminder": {
+              "type": "string",
+              "description": "Must be exactly: 'LIMIT THE FILE CONTENT TO AT MOST 300 LINES. IF MORE CONTENT NEEDS TO BE ADDED USE THE str-replace-editor TOOL TO EDIT THE FILE AFTER IT HAS BEEN CREATED.' 必须准确为：'LIMIT THE FILE CONTENT TO AT MOST 300 LINES. IF MORE CONTENT NEEDS TO BE ADDED USE THE str-replace-editor TOOL TO EDIT THE FILE AFTER IT HAS BEEN CREATED.'"
+            },
+            "path": {
+              "type": "string",
+              "description": "Path for the new file, relative to repo root. 新文件的路径，相对于 repo 根目录。"
+            },
+            "file_content": {
+              "type": "string",
+              "description": "Content to write into the new file. 要写入新文件的内容。"
+            },
+            "add_last_line_newline": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to ensure a trailing newline. 是否确保尾随换行符。"
+            }
+          },
+          "required": ["instructions_reminder", "path", "file_content"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "remove-files",
+        "description": "Delete files from the workspace in a reversible way. 以可逆的方式从工作区中删除文件。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "file_paths": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of file paths to remove, relative to repo root. 要删除的文件路径列表，相对于 repo 根目录。"
+            }
+          },
+          "required": ["file_paths"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "launch-process",
+        "description": "Run a shell command. Use wait=true for short commands. OS is win32; shell is 'bash'. 运行 shell 命令。对短命令使用 wait=true。操作系统是 win32；shell 是 'bash'。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "command": { "type": "string", "description": "The shell command to execute. 要执行的 shell 命令。" },
+            "wait": { "type": "boolean", "description": "Whether to wait for the process to complete. 是否等待进程完成。" },
+            "max_wait_seconds": { "type": "integer", "description": "Timeout in seconds when wait=true. wait=true 时的超时（以秒为单位）。" },
+            "cwd": { "type": "string", "description": "Absolute working directory for the command. 命令的绝对工作目录。" }
+          },
+          "required": ["command", "wait", "max_wait_seconds", "cwd"],
+          "additionalProperties": false
+        }
+      }
+    },
+    { "type": "function", "function": {
+      "name": "read-process",
+      "description": "Read output from a previously launched process. 从先前启动的进程中读取输出。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "terminal_id": { "type": "integer", "description": "Target terminal ID. 目标终端 ID。" },
+          "wait": { "type": "boolean", "description": "Whether to wait for completion. 是否等待完成。" },
+          "max_wait_seconds": { "type": "integer", "description": "Timeout when wait=true. wait=true 时的超时。" }
+        },
+        "required": ["terminal_id", "wait", "max_wait_seconds"],
+        "additionalProperties": false
+      }
+    }},
+    { "type": "function", "function": {
+      "name": "write-process",
+      "description": "Write input to a running process’s stdin. 将输入写入正在运行的进程的 stdin。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "terminal_id": { "type": "integer", "description": "Target terminal ID. 目标终端 ID。" },
+          "input_text": { "type": "string", "description": "Text to write to stdin. 要写入 stdin 的文本。" }
+        },
+        "required": ["terminal_id", "input_text"],
+        "additionalProperties": false
+      }
+    }},
+    { "type": "function", "function": {
+      "name": "kill-process",
+      "description": "Kill a running process by terminal ID. 按终端 ID 终止正在运行的进程。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "terminal_id": { "type": "integer", "description": "Target terminal ID. 目标终端 ID。" }
+        },
+        "required": ["terminal_id"],
+        "additionalProperties": false
+      }
+    }},
+    { "type": "function", "function": {
+      "name": "list-processes",
+      "description": "List all known terminals created with the launch-process tool. 列出使用 launch-process 工具创建的所有已知终端。",
+      "parameters": { "type": "object", "properties": {}, "additionalProperties": false }
+    }},
 
-    {
-      "type": "function",
-      "function": {
-        "name": "launch-process",
-        "description": "运行 shell 命令。对于短命令，使用 wait=true。操作系统是 win32；shell 是 'bash'。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "command": { "type": "string", "description": "要执行的 shell 命令。" },
-            "wait": { "type": "boolean", "description": "是否等待进程完成。" },
-            "max_wait_seconds": { "type": "integer", "description": "当 wait=true 时的超时时间（秒）。" },
-            "cwd": { "type": "string", "description": "命令的绝对工作目录。" }
-          },
-          "required": ["command", "wait", "max_wait_seconds", "cwd"],
-          "additionalProperties": false
-        }
-      }
-    },
-    { "type": "function", "function": {
-      "name": "read-process",
-      "description": "从先前启动的进程中读取输出。",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "terminal_id": { "type": "integer", "description": "目标终端 ID。" },
-          "wait": { "type": "boolean", "description": "是否等待完成。" },
-          "max_wait_seconds": { "type": "integer", "description": "当 wait=true 时的超时时间。" }
-        },
-        "required": ["terminal_id", "wait", "max_wait_seconds"],
-        "additionalProperties": false
-      }
-    }},
-    { "type": "function", "function": {
-      "name": "write-process",
-      "description": "向正在运行的进程的 stdin 写入输入。",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "terminal_id": { "type": "integer", "description": "目标终端 ID。" },
-          "input_text": { "type": "string", "description": "要写入 stdin 的文本。" }
-        },
-        "required": ["terminal_id", "input_text"],
-        "additionalProperties": false
-      }
-    }},
-    { "type": "function", "function": {
-      "name": "kill-process",
-      "description": "通过终端 ID 终止正在运行的进程。",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "terminal_id": { "type": "integer", "description": "目标终端 ID。" }
-        },
-        "required": ["terminal_id"],
-        "additionalProperties": false
-      }
-    }},
-    { "type": "function", "function": {
-      "name": "list-processes",
-      "description": "列出使用 launch-process 工具创建的所有已知终端。",
-      "parameters": { "type": "object", "properties": {}, "additionalProperties": false }
-    }},
+    {
+      "type": "function",
+      "function": {
+        "name": "diagnostics",
+        "description": "Return IDE issues (errors, warnings, etc.) for specified files. 返回指定文件的 IDE 问题（错误、警告等）。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paths": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "List of file paths to get issues for. 要获取问题的文件路径列表。"
+            }
+          },
+          "required": ["paths"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "read-terminal",
+        "description": "Read the visible output from the active or most-recently used VSCode terminal. 读取活动或最近使用的 VSCode 终端的可见输出。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "only_selected": {
+              "type": "boolean",
+              "description": "Whether to read only the selected text. 是否仅读取选定的文本。"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
 
-    {
-      "type": "function",
-      "function": {
-        "name": "diagnostics",
-        "description": "返回指定文件的 IDE 问题（错误、警告等）。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "paths": {
-              "type": "array",
-              "items": { "type": "string" },
-              "description": "要获取问题的文件的路径列表。"
-            }
-          },
-          "required": ["paths"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "read-terminal",
-        "description": "读取活动或最近使用的 VSCode 终端的可见输出。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "only_selected": {
-              "type": "boolean",
-              "description": "是否仅读取选定的文本。"
-            }
-          },
-          "additionalProperties": false
-        }
-      }
-    },
+    {
+      "type": "function",
+      "function": {
+        "name": "open-browser",
+        "description": "Open a URL in the default browser. 在默认浏览器中打开 URL。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "url": { "type": "string", "description": "URL to open. 要打开的 URL。" }
+          },
+          "required": ["url"],
+          "additionalProperties": false
+        }
+      }
+    },
 
-    {
-      "type": "function",
-      "function": {
-        "name": "open-browser",
-        "description": "在默认浏览器中打开一个 URL。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "url": { "type": "string", "description": "要打开的 URL。" }
-          },
-          "required": ["url"],
-          "additionalProperties": false
-        }
-      }
-    },
+    {
+      "type": "function",
+      "function": {
+        "name": "web-search",
+        "description": "Search the web using Google Custom Search API. 使用 Google 自定义搜索 API 搜索网络。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string", "description": "Search query. 搜索查询。" },
+            "num_results": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "default": 5,
+              "description": "Number of results to return (1–10). 要返回的结果数量 (1–10)。"
+            }
+          },
+          "required": ["query"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "web-fetch",
+        "description": "Fetch a webpage and return its content in Markdown format. 获取网页并以 Markdown 格式返回其内容。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "url": { "type": "string", "description": "URL to fetch. 要获取的 URL。" }
+          },
+          "required": ["url"],
+          "additionalProperties": false
+        }
+      }
+    },
 
-    {
-      "type": "function",
-      "function": {
-        "name": "web-search",
-        "description": "使用 Google Custom Search API 搜索网页。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "query": { "type": "string", "description": "搜索查询。" },
-            "num_results": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 10,
-              "default": 5,
-              "description": "要返回的结果数量（1-10）。"
-            }
-          },
-          "required": ["query"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "web-fetch",
-        "description": "抓取网页并以 Markdown 格式返回其内容。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "url": { "type": "string", "description": "要抓取的 URL。" }
-          },
-          "required": ["url"],
-          "additionalProperties": false
-        }
-      }
-    },
+    {
+      "type": "function",
+      "function": {
+        "name": "view-range-untruncated",
+        "description": "View a specific line range from previously truncated content by reference ID. 按引用 ID 查看先前截断内容的特定行范围。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "reference_id": { "type": "string", "description": "Reference ID from truncation footer. 截断页脚中的引用 ID。" },
+            "start_line": { "type": "integer", "description": "1-based inclusive start line. 基于 1 的包含起始行。" },
+            "end_line": { "type": "integer", "description": "1-based inclusive end line. 基于 1 的包含结束行。" }
+          },
+          "required": ["reference_id", "start_line", "end_line"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search-untruncated",
+        "description": "Search within previously untruncated content by reference ID. 按引用 ID 在先前未截断的内容中搜索。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "reference_id": { "type": "string", "description": "Reference ID from truncation footer. 截断页脚中的引用 ID。" },
+            "search_term": { "type": "string", "description": "Text to search for. 要搜索的文本。" },
+            "context_lines": { "type": "integer", "default": 2, "description": "Context lines around matches. 匹配项周围的上下文行。" }
+          },
+          "required": ["reference_id", "search_term"],
+          "additionalProperties": false
+        }
+      }
+    },
 
-    {
-      "type": "function",
-      "function": {
-        "name": "view-range-untruncated",
-        "description": "通过引用 ID 查看先前截断内容的特定行范围。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "reference_id": { "type": "string", "description": "来自截断脚注的引用 ID。" },
-            "start_line": { "type": "integer", "description": "1-based 包含起始行。" },
-            "end_line": { "type": "integer", "description": "1-based 包含结束行。" }
-          },
-          "required": ["reference_id", "start_line", "end_line"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "search-untruncated",
-        "description": "通过引用 ID 在先前未截断的内容中进行搜索。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "reference_id": { "type": "string", "description": "来自截断脚注的引用 ID。" },
-            "search_term": { "type": "string", "description": "要搜索的文本。" },
-            "context_lines": { "type": "integer", "default": 2, "description": "匹配项周围的上下文行数。" }
-          },
-          "required": ["reference_id", "search_term"],
-          "additionalProperties": false
-        }
-      }
-    },
+    {
+      "type": "function",
+      "function": {
+        "name": "view_tasklist",
+        "description": "View the current task list for the conversation. 查看对话的当前任务列表。",
+        "parameters": { "type": "object", "properties": {}, "additionalProperties": false }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "add_tasks",
+        "description": "Add one or more new tasks (and optional subtasks) to the task list. 向任务列表添加一个或多个新任务（和可选子任务）。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "parent_task_id": { "type": "string" },
+                  "after_task_id": { "type": "string" },
+                  "state": {
+                    "type": "string",
+                    "enum": ["NOT_STARTED", "IN_PROGRESS", "CANCELLED", "COMPLETE"]
+                  }
+                },
+                "required": ["name", "description"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["tasks"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "update_tasks",
+        "description": "Update one or more tasks' properties (state, name, description). Prefer batch updates. 更新一个或多个任务的属性（状态、名称、描述）。首选批量更新。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "task_id": { "type": "string" },
+                  "state": {
+                    "type": "string",
+                    "enum": ["NOT_STARTED", "IN_PROGRESS", "CANCELLED", "COMPLETE"]
+                  },
+                  "name": { "type": "string" },
+                  "description": { "type": "string" }
+                },
+                "required": ["task_id"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["tasks"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "reorganize_tasklist",
+        "description": "Major restructuring of the task list using a full markdown representation. 使用完整的 markdown 表示形式对任务列表进行重大重组。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "markdown": { "type": "string", "description": "Full task list in markdown with exactly one root task. markdown 格式的完整任务列表，仅包含一个根任务。" }
+          },
+          "required": ["markdown"],
+          "additionalProperties": false
+        }
+      }
+    },
 
-    {
-      "type": "function",
-      "function": {
-        "name": "view_tasklist",
-        "description": "查看当前对话的任务列表。",
-        "parameters": { "type": "object", "properties": {}, "additionalProperties": false }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "add_tasks",
-        "description": "向任务列表添加一个或多个新任务（和可选的子任务）。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "tasks": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "description": { "type": "string" },
-                  "parent_task_id": { "type": "string" },
-                  "after_task_id": { "type": "string" },
-                  "state": {
-                    "type": "string",
-                    "enum": ["NOT_STARTED", "IN_PROGRESS", "CANCELLED", "COMPLETE"]
-                  }
-                },
-                "required": ["name", "description"],
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": ["tasks"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "update_tasks",
-        "description": "更新一个或多个任务的属性（状态、名称、描述）。倾向于批量更新。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "tasks": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "task_id": { "type": "string" },
-                  "state": {
-                    "type": "string",
-                    "enum": ["NOT_STARTED", "IN_PROGRESS", "CANCELLED", "COMPLETE"]
-                  },
-                  "name": { "type": "string" },
-                  "description": { "type": "string" }
-                },
-                "required": ["task_id"],
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": ["tasks"],
-          "additionalProperties": false
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "reorganize_tasklist",
-        "description": "使用完整的 markdown 表示对任务列表进行重大重组。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "markdown": { "type": "string", "description": "带有且仅带有一个根任务的完整 markdown 格式任务列表。" }
-          },
-          "required": ["markdown"],
-          "additionalProperties": false
-        }
-      }
-    },
+    {
+      "type": "function",
+      "function": {
+        "name": "remember",
+        "description": "Store long-term memory that can be useful in future interactions. 存储可在以后的交互中使用的长期记忆。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "memory": { "type": "string", "description": "One concise sentence to remember. 一句简洁的记忆。" }
+          },
+          "required": ["memory"],
+          "additionalProperties": false
+        }
+      }
+    },
 
-    {
-      "type": "function",
-      "function": {
-        "name": "remember",
-        "description": "存储可在未来交互中有用的长期记忆。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "memory": { "type": "string", "description": "要记住的一个简洁句子。" }
-          },
-          "required": ["memory"],
-          "additionalProperties": false
-        }
-      }
-    },
-
-    {
-      "type": "function",
-      "function": {
-        "name": "render-mermaid",
-        "description": "根据提供的定义渲染 Mermaid 图表。",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "diagram_definition": { "type": "string", "description": "Mermaid 定义代码。" },
-            "title": { "type": "string", "description": "图表的可选标题。" }
-          },
-          "required": ["diagram_definition"],
-          "additionalProperties": false
-        }
-      }
-    }
-  ]
+    {
+      "type": "function",
+      "function": {
+        "name": "render-mermaid",
+        "description": "Render a Mermaid diagram from the provided definition. 根据提供的定义渲染 Mermaid 图表。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "diagram_definition": { "type": "string", "description": "Mermaid definition code. Mermaid 定义代码。" },
+            "title": { "type": "string", "description": "Optional title for the diagram. 图表的可选标题。" }
+          },
+          "required": ["diagram_definition"],
+          "additionalProperties": false
+        }
+      }
+    }
+  ]
 }
